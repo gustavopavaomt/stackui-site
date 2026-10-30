@@ -1,5 +1,20 @@
 /* The docs: their own styles, like the rest of the site. */
-.docs { min-height: 100vh; background: #fff; }
+.docs {
+  /* Light and readable, with the site's type: the docs keep their own palette. */
+  --ink: #111113;
+  --ink-2: #55555c;
+  --ink-3: #8a8a92;
+  --hairline: #e4e4e7;
+  --gray: #f4f4f5;
+  --blue: #111113;
+  --link: #0b57d0;
+  min-height: 100vh;
+  background: #fff;
+  color: var(--ink);
+  color-scheme: light;
+}
+.docs a { color: var(--link); }
+.docs a:hover { text-decoration: underline; }
 
 /* ---- Top bar ---- */
 .docs-top {
@@ -12,7 +27,7 @@
   backdrop-filter: saturate(180%) blur(20px);
 }
 .docs-top__inner { display: flex; align-items: center; gap: 32px; max-width: 1440px; height: 56px; margin: 0 auto; padding: 0 24px; }
-.docs-top__brand { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); font-family: var(--display); font-size: 20px; font-weight: 600; letter-spacing: 0.01em; }
+.docs-top__brand { display: inline-flex; align-items: center; gap: 10px; color: var(--ink) !important; letter-spacing: 0.2em !important; text-transform: uppercase; font-family: var(--display); font-size: 20px; font-weight: 600; letter-spacing: 0.01em; }
 .docs-top__brand:hover { text-decoration: none; }
 .docs-top__nav { display: flex; gap: 24px; font-size: 14px; }
 .docs-top__nav a { color: var(--ink-2); }
