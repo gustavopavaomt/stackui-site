@@ -4,7 +4,7 @@ Screens are built from stacks, the same way native apps are: a vertical stack of
 
 @example text-and-stacks 260
 ```tsx
-import { HStack, Spacer, Text, VStack } from "stackui";
+import { HStack, Spacer, Text, VStack } from "stackui-kit";
 
 <VStack spacing={12} style={{ padding: 16 }}>
   <VStack spacing={4} alignment="leading">

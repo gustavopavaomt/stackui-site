@@ -4,7 +4,7 @@ The top of a screen: the title, the back button and the toolbar. Transparent at 
 
 @example navigation-bar 420
 ```tsx
-import { List, NavigationBar, ToolbarButton } from "stackui";
+import { List, NavigationBar, ToolbarButton } from "stackui-kit";
 
 <NavigationBar
   title="Inbox"

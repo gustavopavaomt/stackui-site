@@ -4,7 +4,7 @@ Runs your app only when it is installed, and shows how to install it everywhere 
 
 @example install-gate 560
 ```tsx
-import { InstallGate } from "stackui";
+import { InstallGate } from "stackui-kit";
 
 <InstallGate appName="Wallet" icon={<img src="/icon-192.png" alt="" />}>
   <App />

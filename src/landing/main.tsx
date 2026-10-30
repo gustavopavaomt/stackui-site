@@ -14,7 +14,7 @@ import "./landing.css";
 
 const GITHUB = "https://github.com/gustavopavaomt/stackui";
 const AUTOR = "https://github.com/gustavopavaomt";
-const INSTALAR = "npm install stackui";
+const INSTALAR = "npm install stackui-kit";
 const BASE = import.meta.env.BASE_URL;
 /** The width of an iPhone screen in CSS pixels: the demos are laid out at this width, then scaled. */
 const LARGURA_APARELHO = 390;
@@ -144,8 +144,8 @@ function Copiar() {
   );
 }
 
-const CODIGO = `import "stackui/styles.css";
-import { App, List, NavigationBar, Row, Section, Toggle } from "stackui";
+const CODIGO = `import "stackui-kit/styles.css";
+import { App, List, NavigationBar, Row, Section, Toggle } from "stackui-kit";
 
 export function Settings() {
   const [alerts, setAlerts] = useState(true);
@@ -163,8 +163,8 @@ export function Settings() {
   );
 }`;
 
-const CODIGO_PT = `import "stackui/styles.css";
-import { App, List, NavigationBar, Row, Section, Toggle } from "stackui";
+const CODIGO_PT = `import "stackui-kit/styles.css";
+import { App, List, NavigationBar, Row, Section, Toggle } from "stackui-kit";
 
 export function Ajustes() {
   const [avisos, setAvisos] = useState(true);
@@ -215,7 +215,7 @@ function Landing() {
             <Phone demo="app" titulo={t("Wallet, a finance app built with StackUI. It is live: tap it.", "Wallet, um app de finanças feito com StackUI. Está rodando: toque nele.")} />
           </div>
           <div className="stage__copy">
-            <p className="stage__label">stackui</p>
+            <p className="stage__label">stackui-kit</p>
             <h1 className="stage__title">
               {t("Native feel.", "Cara de nativo.")}
               <br />

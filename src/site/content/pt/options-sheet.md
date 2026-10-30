@@ -4,7 +4,7 @@ Uma escolha numa folha, como ordenação ou filtro. Escolher fecha a folha.
 
 @example options-sheet 480
 ```tsx
-import { OptionsSheet, Row } from "stackui";
+import { OptionsSheet, Row } from "stackui-kit";
 
 <Row title="Ordenar por" value={nomes[ordem]} onClick={() => setAberta(true)} chevron />
 

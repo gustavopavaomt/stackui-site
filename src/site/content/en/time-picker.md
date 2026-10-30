@@ -4,7 +4,7 @@ A compact time button that opens two wheels, hours and minutes, in a sheet.
 
 @example time-picker 560
 ```tsx
-import { Row, TimePicker } from "stackui";
+import { Row, TimePicker } from "stackui-kit";
 
 const [time, setTime] = useState(""); // "09:30"
 

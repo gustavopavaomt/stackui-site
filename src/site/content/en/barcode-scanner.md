@@ -4,7 +4,7 @@ Reads product barcodes with the camera, offline. It is a separate entry: apps th
 
 @example barcode-scanner 560
 ```tsx
-import { BarcodeScanner } from "stackui/barcode";
+import { BarcodeScanner } from "stackui-kit/barcode";
 
 <Sheet isPresented={open} onDismiss={() => setOpen(false)} title="Scan">
   {open && <BarcodeScanner onScan={(code) => { setCode(code); setOpen(false); }} />}

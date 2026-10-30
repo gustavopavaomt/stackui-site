@@ -4,7 +4,7 @@ Uma mensagem curta que sobe do rodapé e some sozinha. Os avisos fazem fila, e u
 
 @example toast 320
 ```tsx
-import { Button, useToast } from "stackui";
+import { Button, useToast } from "stackui-kit";
 
 const { show } = useToast();
 

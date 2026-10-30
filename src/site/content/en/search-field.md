@@ -4,7 +4,7 @@ The search capsule. With `sticky`, it stays under the navigation bar, hides as y
 
 @example search-field 420
 ```tsx
-import { normalizeSearch, Row, SearchField, Section } from "stackui";
+import { normalizeSearch, Row, SearchField, Section } from "stackui-kit";
 
 const [query, setQuery] = useState("");
 const shown = fruits.filter((f) => normalizeSearch(f).includes(normalizeSearch(query)));

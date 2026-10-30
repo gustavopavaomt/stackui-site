@@ -29,7 +29,7 @@ import {
   normalizeSearch,
   useToast,
   type ButtonState,
-} from "stackui";
+} from "stackui-kit";
 
 import { CATEGORIAS, dataCurta, dataLonga, gerarLancamentos, hojeIso, moeda, type Categoria, type Lancamento } from "./data";
 import { L, LOCALE, PT } from "./lang";

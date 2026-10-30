@@ -4,7 +4,7 @@ A toolbar button that opens a menu of actions anchored to it. Destructive action
 
 @example menu 320
 ```tsx
-import { Menu, NavigationBar } from "stackui";
+import { Menu, NavigationBar } from "stackui-kit";
 
 <NavigationBar
   title="Note"

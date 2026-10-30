@@ -12,7 +12,7 @@ A phone app moves between screens with a stack: opening a screen pushes it in fr
 
 @example navigation-stack 420
 ```tsx
-import { NavigationBar, NavigationStack, List, Row, Section } from "stackui";
+import { NavigationBar, NavigationStack, List, Row, Section } from "stackui-kit";
 
 function People() {
   return (
@@ -51,7 +51,7 @@ Pass the location to `<Routes>`, so the leaving screen keeps drawing its own rou
 
 ```tsx
 import { Link, Route, Routes, useLocation } from "react-router";
-import { NavigationStack, Row } from "stackui";
+import { NavigationStack, Row } from "stackui-kit";
 
 function Shell() {
   const { pathname } = useLocation();

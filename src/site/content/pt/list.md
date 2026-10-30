@@ -4,7 +4,7 @@ Uma tela de conteúdo agrupado: uma `List` de `Section`s, cada uma um cartão de
 
 @example list 380
 ```tsx
-import { List, Row, Section, Toggle } from "stackui";
+import { List, Row, Section, Toggle } from "stackui-kit";
 
 <List>
   <Section header="Conta" footer="Seus dados ficam neste aparelho.">

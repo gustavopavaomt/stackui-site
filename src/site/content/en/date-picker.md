@@ -4,7 +4,7 @@ A compact date button that opens a calendar in a sheet, the same on iPhone and A
 
 @example date-picker 560
 ```tsx
-import { DatePicker, Row } from "stackui";
+import { DatePicker, Row } from "stackui-kit";
 
 const [date, setDate] = useState(""); // "2026-10-30"
 

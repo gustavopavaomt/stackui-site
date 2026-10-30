@@ -4,7 +4,7 @@ As telas são montadas com pilhas, como nos apps nativos: uma pilha vertical de 
 
 @example text-and-stacks 260
 ```tsx
-import { HStack, Spacer, Text, VStack } from "stackui";
+import { HStack, Spacer, Text, VStack } from "stackui-kit";
 
 <VStack spacing={12} style={{ padding: 16 }}>
   <VStack spacing={4} alignment="leading">

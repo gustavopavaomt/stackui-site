@@ -4,7 +4,7 @@ O formato do conteúdo enquanto ele carrega. O `Redacted` espera um instante ant
 
 @example redacted 360
 ```tsx
-import { Avatar, Redacted, Row, Section, SkeletonList } from "stackui";
+import { Avatar, Redacted, Row, Section, SkeletonList } from "stackui-kit";
 
 <Section header="Contatos">
   <Redacted isLoading={!contatos} placeholder={<SkeletonList rows={3} leading="circle" label="Carregando…" />}>

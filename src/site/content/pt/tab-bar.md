@@ -4,7 +4,7 @@ A barra de baixo das seções principais: uma cápsula flutuante em que a aba es
 
 @example tab-bar 300
 ```tsx
-import { TabBar } from "stackui";
+import { TabBar } from "stackui-kit";
 
 const [aba, setAba] = useState("home");
 

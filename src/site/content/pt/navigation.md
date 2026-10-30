@@ -12,7 +12,7 @@ Um app de celular anda entre telas como uma pilha: abrir uma tela a empurra pela
 
 @example navigation-stack 420
 ```tsx
-import { NavigationBar, NavigationStack, List, Row, Section } from "stackui";
+import { NavigationBar, NavigationStack, List, Row, Section } from "stackui-kit";
 
 function Pessoas() {
   return (
@@ -51,7 +51,7 @@ Passe o endereço ao `<Routes>`, para a tela que sai continuar desenhando a pró
 
 ```tsx
 import { Link, Route, Routes, useLocation } from "react-router";
-import { NavigationStack, Row } from "stackui";
+import { NavigationStack, Row } from "stackui-kit";
 
 function Moldura() {
   const { pathname } = useLocation();

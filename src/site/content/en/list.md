@@ -4,7 +4,7 @@ A screen of grouped content: a `List` of `Section`s, each one a card of `Row`s.
 
 @example list 380
 ```tsx
-import { List, Row, Section, Toggle } from "stackui";
+import { List, Row, Section, Toggle } from "stackui-kit";
 
 <List>
   <Section header="Account" footer="Your data stays on this device.">

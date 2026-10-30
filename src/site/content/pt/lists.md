@@ -4,7 +4,7 @@ A maioria das telas de um app são listas: ajustes, mensagens, lançamentos. Na 
 
 @example list 380
 ```tsx
-import { List, Row, Section, Toggle } from "stackui";
+import { List, Row, Section, Toggle } from "stackui-kit";
 
 <List>
   <Section header="Conta" footer="Seus dados ficam neste aparelho.">
@@ -32,7 +32,7 @@ Uma lista de milhares de linhas precisa da `LazyList`: ela desenha só as linhas
 
 @example lazy-list 420
 ```tsx
-import { Avatar, LazyList, List, Row, Section } from "stackui";
+import { Avatar, LazyList, List, Row, Section } from "stackui-kit";
 
 <List>
   <Section header="20 mil pessoas" plain>

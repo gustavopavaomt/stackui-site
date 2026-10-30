@@ -8,7 +8,7 @@ Wrap your app in `InstallGate`. Opened from the icon, it renders your app. In a 
 
 @example install-gate 560
 ```tsx
-import { InstallGate } from "stackui";
+import { InstallGate } from "stackui-kit";
 
 <InstallGate appName="Wallet" icon={<img src="/icon-192.png" alt="" />}>
   <App />
@@ -25,7 +25,7 @@ import { InstallGate } from "stackui";
 - `useIosKeyboardFix()` fixes a WebKit bug of installed apps on iPhone, where the screen stays short after the keyboard closes.
 
 ```tsx
-import { captureInstallPrompt } from "stackui";
+import { captureInstallPrompt } from "stackui-kit";
 
 captureInstallPrompt();
 createRoot(root).render(<Main />);

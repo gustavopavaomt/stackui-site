@@ -23,7 +23,7 @@ Esta é uma tela completa. As próximas páginas explicam cada parte.
 @example first-screen 360
 ```tsx
 import { useState } from "react";
-import { List, NavigationBar, Row, Section, Toggle } from "stackui";
+import { List, NavigationBar, Row, Section, Toggle } from "stackui-kit";
 
 export function Ajustes() {
   const [avisos, setAvisos] = useState(true);

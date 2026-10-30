@@ -8,7 +8,7 @@ Uma folha é controlada por `isPresented`: deixe `true` para abrir e feche no `o
 
 @example sheet 460
 ```tsx
-import { Button, List, Row, Section, Sheet } from "stackui";
+import { Button, List, Row, Section, Sheet } from "stackui-kit";
 
 const [aberta, setAberta] = useState(false);
 
@@ -35,7 +35,7 @@ const [aberta, setAberta] = useState(false);
 
 @example alert 360
 ```tsx
-import { Alert, Button } from "stackui";
+import { Alert, Button } from "stackui-kit";
 
 <Button variant="destructive" onClick={() => setAberto(true)}>Apagar foto</Button>
 

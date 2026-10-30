@@ -4,7 +4,7 @@ An on and off switch for something that takes effect at once.
 
 @example toggle 200
 ```tsx
-import { Row, Toggle } from "stackui";
+import { Row, Toggle } from "stackui-kit";
 
 const [isOn, setIsOn] = useState(true);
 

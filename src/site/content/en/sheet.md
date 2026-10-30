@@ -4,7 +4,7 @@ A panel that slides up over the screen. Drag it down, tap outside, press Esc or 
 
 @example sheet 460
 ```tsx
-import { Button, List, Row, Section, Sheet } from "stackui";
+import { Button, List, Row, Section, Sheet } from "stackui-kit";
 
 const [isPresented, setIsPresented] = useState(false);
 

@@ -4,7 +4,7 @@ Um controle segmentado: duas a quatro opções curtas que se excluem. A escolha 
 
 @example picker 220
 ```tsx
-import { Picker } from "stackui";
+import { Picker } from "stackui-kit";
 
 const [periodo, setPeriodo] = useState<"day" | "week" | "month">("week");
 

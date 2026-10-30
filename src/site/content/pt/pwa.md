@@ -8,7 +8,7 @@ Envolva o app no `InstallGate`. Aberto pelo ícone, ele mostra o seu app. No nav
 
 @example install-gate 560
 ```tsx
-import { InstallGate } from "stackui";
+import { InstallGate } from "stackui-kit";
 
 <InstallGate appName="Wallet" icon={<img src="/icone-192.png" alt="" />}
   texts={{ title: "Instale o app", install: "Instalar", copyLink: "Copiar link" /* … */ }}>
@@ -26,7 +26,7 @@ import { InstallGate } from "stackui";
 - `useIosKeyboardFix()` corrige um erro do WebKit em apps instalados no iPhone, em que a tela fica curta depois que o teclado fecha.
 
 ```tsx
-import { captureInstallPrompt } from "stackui";
+import { captureInstallPrompt } from "stackui-kit";
 
 captureInstallPrompt();
 createRoot(raiz).render(<Principal />);

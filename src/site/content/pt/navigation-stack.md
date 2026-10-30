@@ -4,7 +4,7 @@ Telas animadas como uma pilha nativa: abrir desliza a nova tela para dentro, vol
 
 @example navigation-stack 420
 ```tsx
-import { NavigationStack } from "stackui";
+import { NavigationStack } from "stackui-kit";
 
 const endereco = useHash(); // ou useLocation().pathname
 

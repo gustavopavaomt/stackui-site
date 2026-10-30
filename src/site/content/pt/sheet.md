@@ -4,7 +4,7 @@ Um painel que sobe por cima da tela. Arraste para baixo, toque fora, aperte Esc 
 
 @example sheet 460
 ```tsx
-import { Button, List, Row, Section, Sheet } from "stackui";
+import { Button, List, Row, Section, Sheet } from "stackui-kit";
 
 const [aberta, setAberta] = useState(false);
 

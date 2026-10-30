@@ -4,7 +4,7 @@ Animated screens, like a native navigation stack: pushing slides the new screen 
 
 @example navigation-stack 420
 ```tsx
-import { NavigationStack } from "stackui";
+import { NavigationStack } from "stackui-kit";
 
 const location = useHash(); // or useLocation().pathname
 

@@ -5,7 +5,7 @@ A StackUI é um pacote npm com um arquivo de estilos.
 ## Instale o pacote
 
 ```sh
-npm install stackui
+npm install stackui-kit
 ```
 
 ## Importe os estilos uma vez
@@ -14,7 +14,7 @@ Importe o CSS no arquivo de entrada, antes do seu próprio CSS:
 
 ```tsx
 // main.tsx
-import "stackui/styles.css";
+import "stackui-kit/styles.css";
 ```
 
 ## Envolva o app
@@ -23,8 +23,8 @@ import "stackui/styles.css";
 
 ```tsx
 import { createRoot } from "react-dom/client";
-import { App, ToastProvider } from "stackui";
-import "stackui/styles.css";
+import { App, ToastProvider } from "stackui-kit";
+import "stackui-kit/styles.css";
 
 createRoot(document.getElementById("root")!).render(
   <App>

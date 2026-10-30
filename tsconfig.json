@@ -17,10 +17,10 @@
       "react/*": ["./node_modules/@types/react/*"],
       "react-dom": ["./node_modules/@types/react-dom"],
       "react-dom/*": ["./node_modules/@types/react-dom/*"],
-      "stackui": ["../stackui/packages/react/src/index.ts"],
-      "stackui/barcode": ["../stackui/packages/react/src/barcode.ts"],
+      "stackui-kit": ["../stackui/packages/react/src/index.ts"],
+      "stackui-kit/barcode": ["../stackui/packages/react/src/barcode.ts"],
       "@zxing/*": ["./node_modules/@zxing/*"],
-      "stackui/styles.css": ["../stackui/packages/react/src/styles/index.css"]
+      "stackui-kit/styles.css": ["../stackui/packages/react/src/styles/index.css"]
     }
   },
   "include": ["src", "vite.config.ts"]

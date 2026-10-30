@@ -4,7 +4,7 @@ Forms are lists too: fields and controls live in sections, and the button that s
 
 @example text-field 260
 ```tsx
-import { List, Section, TextField } from "stackui";
+import { List, Section, TextField } from "stackui-kit";
 
 const [email, setEmail] = useState("");
 const invalid = email.length > 0 && !email.includes("@");
@@ -32,7 +32,7 @@ Give the save button a `state`. It shows a spinner while saving and a check when
 
 @example button 340
 ```tsx
-import { Button, type ButtonState } from "stackui";
+import { Button, type ButtonState } from "stackui-kit";
 
 const [state, setState] = useState<ButtonState>("idle");
 

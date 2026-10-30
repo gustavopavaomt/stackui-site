@@ -25,7 +25,7 @@ import {
   VStack,
   useToast,
   type ButtonState,
-} from "stackui";
+} from "stackui-kit";
 
 import { CARTAO, COMPARTILHAR, COPIAR, DOCUMENTO, ESCUDO } from "./icons";
 import { L, LOCALE, PT } from "./lang";

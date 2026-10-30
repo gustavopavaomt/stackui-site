@@ -4,7 +4,7 @@ A cápsula de busca. Com `sticky`, fica presa abaixo da barra de navegação, so
 
 @example search-field 420
 ```tsx
-import { normalizeSearch, Row, SearchField, Section } from "stackui";
+import { normalizeSearch, Row, SearchField, Section } from "stackui-kit";
 
 const [busca, setBusca] = useState("");
 const visiveis = frutas.filter((f) => normalizeSearch(f).includes(normalizeSearch(busca)));

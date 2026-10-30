@@ -4,7 +4,7 @@ A choice in a sheet, such as a sort order or a filter. Choosing closes it.
 
 @example options-sheet 480
 ```tsx
-import { OptionsSheet, Row } from "stackui";
+import { OptionsSheet, Row } from "stackui-kit";
 
 <Row title="Sort by" value={labels[sort]} onClick={() => setOpen(true)} chevron />
 

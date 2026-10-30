@@ -4,7 +4,7 @@ Um botão da barra de ferramentas que abre um menu de ações preso a ele. Açõ
 
 @example menu 320
 ```tsx
-import { Menu, NavigationBar } from "stackui";
+import { Menu, NavigationBar } from "stackui-kit";
 
 <NavigationBar
   title="Nota"

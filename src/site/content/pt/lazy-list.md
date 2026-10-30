@@ -4,7 +4,7 @@ Uma lista de milhares de linhas que não trava: só existem as linhas da tela, e
 
 @example lazy-list 420
 ```tsx
-import { Avatar, LazyList, List, Row, Section } from "stackui";
+import { Avatar, LazyList, List, Row, Section } from "stackui-kit";
 
 <List>
   <Section header="20 mil pessoas" plain>

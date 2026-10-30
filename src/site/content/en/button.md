@@ -4,7 +4,7 @@ A button that can show its own progress: a spinner while working and a check whe
 
 @example button 340
 ```tsx
-import { Button, type ButtonState } from "stackui";
+import { Button, type ButtonState } from "stackui-kit";
 
 const [state, setState] = useState<ButtonState>("idle");
 

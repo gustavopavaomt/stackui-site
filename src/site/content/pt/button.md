@@ -4,7 +4,7 @@ Um botão que mostra o próprio progresso: carregando enquanto trabalha e um che
 
 @example button 340
 ```tsx
-import { Button, type ButtonState } from "stackui";
+import { Button, type ButtonState } from "stackui-kit";
 
 const [estado, setEstado] = useState<ButtonState>("idle");
 
