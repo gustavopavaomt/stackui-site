@@ -1,29 +1,40 @@
-import { useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 
 import {
-  Avatar,
+  Alert,
   Badge,
-  ConfirmationSheet,
+  Button,
+  Card,
+  DatePicker,
+  HStack,
   LazyList,
   List,
+  ListPicker,
   Menu,
   NavigationBar,
   NavigationStack,
   OptionsSheet,
+  Picker,
+  PickerRow,
   Row,
   SearchField,
   Section,
+  Sheet,
+  Spacer,
   TabBar,
-  Timeline,
+  Text,
+  TextEditor,
+  TextField,
   Toggle,
   ToolbarButton,
+  VStack,
   normalizeSearch,
   useToast,
   type ButtonState,
 } from "@stackui/react";
 
-import { CIDADES, moeda, PEDIDOS, STATUS } from "./data";
-import { COPIAR, ENGRENAGEM, ESCUDO, FILTRO, LIXO, LUA, MAIS, PASTA, PESSOAS, RETICENCIAS, SINO, WIFI } from "./icons";
+import { CATEGORIAS, dataCurta, dataLonga, gerarLancamentos, hojeIso, moeda, type Categoria, type Lancamento } from "./data";
+import { CARTAO, CASA, ENGRENAGEM, FILTRO, ICONES_CATEGORIA, LAPIS, LISTA, LIXO, MAIS, MOEDA, RETICENCIAS, ROSTO, SINO } from "./icons";
 
 /** A tiny hash router: the library works with any router. */
 export function useHash(inicial: string) {
@@ -37,35 +48,229 @@ export function useHash(inicial: string) {
   return caminho;
 }
 
-function Pedidos() {
-  const [busca, setBusca] = useState("");
-  const [filtro, setFiltro] = useState<"all" | "open" | "sent" | "invoiced">("all");
-  const [filtrando, setFiltrando] = useState(false);
+/* ---- The store: create, read, update and delete transactions (in memory) ---- */
+
+type Loja = {
+  lancamentos: Lancamento[];
+  salvar: (l: Lancamento) => void;
+  apagar: (id: string) => void;
+  /** Opens the form: empty for a new one, filled to edit. */
+  editar: (l: Lancamento | "expense" | "income") => void;
+};
+const Ctx = createContext<Loja | null>(null);
+const useLoja = () => useContext(Ctx)!;
+
+let proximoId = 100000;
+
+function ProvedorLoja({ children }: { children: ReactNode }) {
+  const [lancamentos, setLancamentos] = useState(gerarLancamentos);
+  const [formulario, setFormulario] = useState<Lancamento | "expense" | "income" | null>(null);
+  const loja = useMemo<Loja>(
+    () => ({
+      lancamentos,
+      salvar: (l) => setLancamentos((ls) => (ls.some((x) => x.id === l.id) ? ls.map((x) => (x.id === l.id ? l : x)) : [l, ...ls])),
+      apagar: (id) => setLancamentos((ls) => ls.filter((x) => x.id !== id)),
+      editar: setFormulario,
+    }),
+    [lancamentos],
+  );
+  return (
+    <Ctx.Provider value={loja}>
+      {children}
+      <Formulario alvo={formulario} onFechar={() => setFormulario(null)} />
+    </Ctx.Provider>
+  );
+}
+
+const CATEGORIAS_GASTO: Categoria[] = ["groceries", "dining", "transport", "shopping", "bills", "health", "travel", "fun"];
+const CATEGORIAS_ENTRADA: Categoria[] = ["salary", "transfer"];
+
+/** The form sheet (create and update). Choosing a category is an inner screen of the same sheet. */
+function Formulario({ alvo, onFechar }: { alvo: Lancamento | "expense" | "income" | null; onFechar: () => void }) {
+  const { salvar } = useLoja();
   const { show } = useToast();
+  const existente = typeof alvo === "object" ? alvo : null;
+  const [tipo, setTipo] = useState<"expense" | "income">("expense");
+  const [valor, setValor] = useState("");
+  const [titulo, setTitulo] = useState("");
+  const [categoria, setCategoria] = useState<Categoria>("groceries");
+  const [data, setData] = useState(hojeIso());
+  const [nota, setNota] = useState("");
+  const [tela, setTela] = useState<"form" | "category">("form");
+  const [estado, setEstado] = useState<ButtonState>("idle");
+  const [tentou, setTentou] = useState(false);
+
+  // Every time it opens, start from the transaction (or empty).
+  const [abertoPara, setAbertoPara] = useState(alvo);
+  if (abertoPara !== alvo) {
+    setAbertoPara(alvo);
+    if (alvo) {
+      const t = existente ? (existente.valor < 0 ? "expense" : "income") : (alvo as "expense" | "income");
+      setTipo(t);
+      setValor(existente ? Math.abs(existente.valor).toFixed(2) : "");
+      setTitulo(existente?.titulo ?? "");
+      setCategoria(existente?.categoria ?? (t === "expense" ? "groceries" : "salary"));
+      setData(existente?.data ?? hojeIso());
+      setNota(existente?.nota ?? "");
+      setTela("form");
+      setEstado("idle");
+      setTentou(false);
+    }
+  }
+
+  const numero = Number(valor.replace(",", "."));
+  const erroValor = tentou && !(numero > 0) ? "Type an amount" : undefined;
+  const erroTitulo = tentou && !titulo.trim() ? "Type a description" : undefined;
+
+  const gravar = () => {
+    setTentou(true);
+    if (!(numero > 0) || !titulo.trim()) return;
+    setEstado("loading");
+    window.setTimeout(() => {
+      salvar({ id: existente?.id ?? String(proximoId++), titulo: titulo.trim(), categoria, valor: tipo === "expense" ? -numero : numero, data, nota: nota.trim() || undefined });
+      setEstado("done");
+    }, 600);
+    window.setTimeout(() => {
+      onFechar();
+      show(existente ? "Changes saved" : tipo === "expense" ? "Expense added" : "Income added");
+    }, 1300);
+  };
+
+  const opcoesCategoria = (tipo === "expense" ? CATEGORIAS_GASTO : CATEGORIAS_ENTRADA).map((c) => ({ value: c, label: CATEGORIAS[c].nome, icon: ICONES_CATEGORIA[c] }));
+  const titulos = { expense: "New expense", income: "New income" };
+
+  return (
+    <Sheet
+      isPresented={!!alvo}
+      onDismiss={onFechar}
+      title={tela === "category" ? "Category" : existente ? "Edit transaction" : titulos[tipo]}
+      onBack={tela === "category" ? () => setTela("form") : undefined}
+      interactiveDismissDisabled={estado !== "idle"}
+    >
+      {tela === "category" ? (
+        <ListPicker
+          label="Category"
+          options={opcoesCategoria}
+          selection={categoria}
+          onChange={(c) => {
+            setCategoria(c);
+            setTela("form");
+          }}
+        />
+      ) : (
+        <List>
+          <Picker
+            selection={tipo}
+            onChange={(t) => {
+              setTipo(t);
+              setCategoria(t === "expense" ? "groceries" : "salary");
+            }}
+            label="Type"
+            options={[
+              { value: "expense", label: "Expense" },
+              { value: "income", label: "Income" },
+            ]}
+          />
+          <Section>
+            <TextField label="Amount" inputMode="decimal" value={valor} onChange={(e) => setValor(e.target.value)} error={erroValor} accessory={<Text color="secondary">USD</Text>} />
+            <TextField label="Description" value={titulo} onChange={(e) => setTitulo(e.target.value)} error={erroTitulo} />
+            <PickerRow label="Category" value={CATEGORIAS[categoria].nome} onClick={() => setTela("category")} />
+            <Row title="Date" accessory={<DatePicker value={data} onChange={setData} max={hojeIso()} locale="en-US" />} />
+            <TextEditor label="Note" rows={2} value={nota} onChange={(e) => setNota(e.target.value)} />
+          </Section>
+          <Button size="large" state={estado} onClick={gravar} loadingLabel="Saving…" doneLabel="Saved">
+            Save
+          </Button>
+        </List>
+      )}
+    </Sheet>
+  );
+}
+
+/* ---- Screens ---- */
+
+function LinhaLancamento({ l }: { l: Lancamento }) {
+  return (
+    <Row
+      icon={ICONES_CATEGORIA[l.categoria]}
+      iconColor={CATEGORIAS[l.categoria].cor}
+      title={l.titulo}
+      subtitle={`${CATEGORIAS[l.categoria].nome} · ${dataCurta(l.data)}`}
+      value={<span style={l.valor > 0 ? { color: "var(--st-success)" } : undefined}>{moeda(l.valor, true)}</span>}
+      href={`#/activity/${l.id}`}
+      lineLimit={1}
+    />
+  );
+}
+
+const menuNovo = (editar: Loja["editar"]) => <Menu label="Add" icon={MAIS} prominent items={[{ label: "New expense", icon: MOEDA, onPress: () => editar("expense") }, { label: "New income", icon: CARTAO, onPress: () => editar("income") }]} />;
+
+function Inicio() {
+  const { lancamentos, editar } = useLoja();
+  const mes = hojeIso().slice(0, 7);
+  const { saldo, entrou, saiu } = useMemo(() => {
+    let entrou = 0;
+    let saiu = 0;
+    for (const l of lancamentos) {
+      if (!l.data.startsWith(mes)) continue;
+      if (l.valor > 0) entrou += l.valor;
+      else saiu -= l.valor;
+    }
+    return { saldo: 12480.5 + entrou - saiu, entrou, saiu };
+  }, [lancamentos, mes]);
+  return (
+    <>
+      <NavigationBar title="Wallet" trailing={menuNovo(editar)} />
+      <List>
+        <Card>
+          <VStack spacing={4} alignment="leading">
+            <Text font="subheadline" color="secondary">
+              Balance
+            </Text>
+            <Text font="largeTitle" as="p">
+              {moeda(saldo)}
+            </Text>
+            <HStack spacing={8} style={{ marginTop: 8 }}>
+              <Badge tone="success">In {moeda(entrou)}</Badge>
+              <Badge tone="danger">Out {moeda(saiu)}</Badge>
+              <Spacer />
+            </HStack>
+          </VStack>
+        </Card>
+        <Section header="Recent" headerAccessory={<a href="#/activity" style={{ color: "var(--st-tint)", fontSize: 15, textDecoration: "none" }}>See all</a>}>
+          {lancamentos.slice(0, 6).map((l) => (
+            <LinhaLancamento key={l.id} l={l} />
+          ))}
+        </Section>
+      </List>
+    </>
+  );
+}
+
+function Atividade() {
+  const { lancamentos, editar } = useLoja();
+  const [busca, setBusca] = useState("");
+  const [filtro, setFiltro] = useState<"all" | "expense" | "income">("all");
+  const [filtrando, setFiltrando] = useState(false);
   const visiveis = useMemo(() => {
     const t = normalizeSearch(busca);
-    return PEDIDOS.filter((p) => (filtro === "all" || p.status === filtro) && (!t || normalizeSearch(`${p.cliente} ${p.id} ${p.cidade}`).includes(t)));
-  }, [busca, filtro]);
+    return lancamentos.filter((l) => (filtro === "all" || (filtro === "income") === l.valor > 0) && (!t || normalizeSearch(`${l.titulo} ${CATEGORIAS[l.categoria].nome}`).includes(t)));
+  }, [lancamentos, busca, filtro]);
   return (
     <>
       <NavigationBar
-        title="Orders"
+        title="Activity"
         trailing={
           <>
             <ToolbarButton label="Filter" icon={FILTRO} dot={filtro !== "all"} onClick={() => setFiltrando(true)} />
-            <Menu label="Add" icon={MAIS} prominent items={[{ label: "New order", icon: MAIS, onPress: () => show("New order started") }, { label: "New quote", icon: COPIAR, onPress: () => show("New quote started") }]} />
+            {menuNovo(editar)}
           </>
         }
       />
-      <SearchField sticky value={busca} onChange={setBusca} label="Search orders" />
+      <SearchField sticky value={busca} onChange={setBusca} label="Search transactions" />
       <List>
-        <Section header={`${visiveis.length.toLocaleString("en-US")} orders`} plain>
-          <LazyList
-            items={visiveis}
-            id={(p) => p.id}
-            estimatedRowHeight={64}
-            render={(p) => <Row leading={<Avatar name={p.cliente} />} title={p.cliente} subtitle={`#${p.id} · ${STATUS[p.status]}`} value={moeda(p.total)} href={`#/orders/${p.id}`} lineLimit={1} />}
-          />
+        <Section header={`${visiveis.length.toLocaleString("en-US")} transactions`} plain>
+          <LazyList items={visiveis} id={(l) => l.id} estimatedRowHeight={64} render={(l) => <LinhaLancamento l={l} />} />
         </Section>
       </List>
       <OptionsSheet
@@ -75,167 +280,136 @@ function Pedidos() {
         selection={filtro}
         onChange={setFiltro}
         options={[
-          { value: "all", label: "All orders" },
-          { value: "open", label: "Open", description: "Still on this phone" },
-          { value: "sent", label: "Sent", description: "With the company" },
-          { value: "invoiced", label: "Invoiced" },
+          { value: "all", label: "All transactions" },
+          { value: "expense", label: "Expenses" },
+          { value: "income", label: "Income" },
         ]}
       />
     </>
   );
 }
 
-function Pedido({ id }: { id: string }) {
-  const p = PEDIDOS.find((x) => x.id === id) ?? PEDIDOS[0];
+function Detalhe({ id }: { id: string }) {
+  const { lancamentos, apagar, editar } = useLoja();
   const { show } = useToast();
-  const [confirmando, setConfirmando] = useState(false);
-  const [estado, setEstado] = useState<ButtonState>("idle");
-  const enviar = () => {
-    setEstado("loading");
-    window.setTimeout(() => setEstado("done"), 1100);
-    window.setTimeout(() => {
-      setConfirmando(false);
-      setEstado("idle");
-      const t = show("Sending order…", "progress");
-      window.setTimeout(() => t.update("Received by the company", "success"), 1600);
-    }, 2000);
+  const [apagando, setApagando] = useState(false);
+  const l = lancamentos.find((x) => x.id === id);
+  if (!l)
+    return (
+      <>
+        <NavigationBar title="Transaction" backHref="#/activity" />
+      </>
+    );
+  const confirmarApagar = () => {
+    location.hash = "#/activity";
+    window.setTimeout(() => apagar(l.id), 350);
+    show("Transaction deleted");
   };
   return (
     <>
       <NavigationBar
-        title={`Order ${p.id}`}
-        backHref="#/orders"
-        trailing={<Menu label="More" icon={RETICENCIAS} items={[{ label: "Duplicate", icon: COPIAR, onPress: () => show("Order duplicated") }, { label: "Delete", icon: LIXO, destructive: true, onPress: () => show("Order deleted", "error") }]} />}
+        title={l.titulo}
+        displayMode="inline"
+        backHref="#/activity"
+        trailing={<Menu label="More" icon={RETICENCIAS} items={[{ label: "Edit", icon: LAPIS, onPress: () => editar(l) }, { label: "Delete", icon: LIXO, destructive: true, onPress: () => setApagando(true) }]} />}
       />
       <List>
+        <VStack spacing={4} style={{ padding: "8px 0 4px", textAlign: "center", alignItems: "center" }}>
+          <Text font="largeTitle" as="p" style={l.valor > 0 ? { color: "var(--st-success)" } : undefined}>
+            {moeda(l.valor, true)}
+          </Text>
+          <Text color="secondary">{l.titulo}</Text>
+        </VStack>
         <Section>
-          <Row leading={<Avatar name={p.cliente} />} title={p.cliente} subtitle={p.cidade} />
-          <Row title="Status" accessory={<Badge tone={p.status === "open" ? "warning" : "success"}>{STATUS[p.status]}</Badge>} />
-          <Row title="Total" value={moeda(p.total)} />
-        </Section>
-        <Section header="Progress">
-          <Timeline
-            steps={[
-              { title: "Saved on the phone", detail: "Today, 9:12", state: "done" },
-              { title: "Sent", detail: p.status === "open" ? "Goes up when there is signal" : "Today, 9:13", state: p.status === "open" ? "current" : "done" },
-              { title: "Received by the company", state: p.status === "open" ? "upcoming" : p.status === "sent" ? "current" : "done" },
-              { title: "Invoiced", state: p.status === "invoiced" ? "done" : "upcoming" },
-            ]}
-          />
+          <Row icon={ICONES_CATEGORIA[l.categoria]} iconColor={CATEGORIAS[l.categoria].cor} title="Category" value={CATEGORIAS[l.categoria].nome} />
+          <Row title="Date" value={dataLonga(l.data)} />
+          <Row title="Account" value="Everyday ·· 4821" />
+          {l.nota && <Row title="Note" subtitle={l.nota} />}
         </Section>
         <Section>
-          <Row title="Send order" centered onClick={() => setConfirmando(true)} />
+          <Row title="Edit" centered onClick={() => editar(l)} />
+          <Row title="Delete transaction" centered destructive onClick={() => setApagando(true)} />
         </Section>
       </List>
-      <ConfirmationSheet
-        isPresented={confirmando}
-        onDismiss={() => setConfirmando(false)}
-        onConfirm={enviar}
-        state={estado}
-        title="Send order"
-        description="Check the order before it goes to the company."
-        items={[
-          { label: "Client", value: p.cliente },
-          { label: "City", value: p.cidade },
-          { label: "Total", value: moeda(p.total) },
-        ]}
-        confirmLabel="Send"
-        loadingLabel="Sending…"
-        doneLabel="Sent"
-      />
+      <Alert isPresented={apagando} onDismiss={() => setApagando(false)} title="Delete this transaction?" message="It is removed from your history and your balance." actions={[{ label: "Cancel", role: "cancel" }, { label: "Delete", role: "destructive", onPress: confirmarApagar }]} />
     </>
   );
 }
 
-function Clientes() {
-  const [busca, setBusca] = useState("");
-  const nomes = useMemo(() => [...new Set(PEDIDOS.slice(0, 12).map((p) => p.cliente))], []);
-  const visiveis = nomes.filter((n) => normalizeSearch(n).includes(normalizeSearch(busca)));
-  return (
-    <>
-      <NavigationBar title="Clients" />
-      <SearchField sticky value={busca} onChange={setBusca} label="Search clients" />
-      <List>
-        <Section header="Portfolio">
-          {visiveis.map((n, i) => (
-            <Row key={n} leading={<Avatar name={n} />} title={n} subtitle={CIDADES[(i * 5) % CIDADES.length]} href="#/clients" lineLimit={1} />
-          ))}
-        </Section>
-      </List>
-    </>
-  );
-}
-
-function Ajustes() {
+export function Ajustes({ voltar }: { voltar?: string }) {
+  const [faceId, setFaceId] = useState(true);
   const [avisos, setAvisos] = useState(true);
-  const [foco, setFoco] = useState(false);
   return (
     <>
       <NavigationBar title="Settings" />
       <List>
-        <Section header="Connections">
-          <Row icon={WIFI} iconColor="var(--st-blue)" title="Wi-Fi" value="Office" href="#/settings/wifi" />
+        <Section header="Security">
+          <Row icon={ROSTO} iconColor="var(--st-green)" title="Face ID" accessory={<Toggle isOn={faceId} onChange={setFaceId} label="Face ID" />} />
           <Row icon={SINO} iconColor="var(--st-red)" title="Notifications" accessory={<Toggle isOn={avisos} onChange={setAvisos} label="Notifications" />} />
-          <Row icon={LUA} iconColor="var(--st-indigo)" title="Focus" accessory={<Toggle isOn={foco} onChange={setFoco} label="Focus" />} />
         </Section>
-        <Section header="Privacy" footer="Your data stays on this device until you choose to share it.">
-          <Row icon={ESCUDO} iconColor="var(--st-gray)" title="Privacy & Security" subtitle="Location, camera and microphone" href="#/settings/privacy" />
+        <Section header="Accounts" footer="Balances refresh every time you open the app.">
+          <Row icon={CARTAO} iconColor="var(--st-blue)" title="Everyday" subtitle="Checking ·· 4821" value="$12,480" href={`#${voltar ?? "/settings"}/everyday`} />
+          <Row icon={MOEDA} iconColor="var(--st-indigo)" title="Savings" subtitle="High yield ·· 0937" value="$31,200" href={`#${voltar ?? "/settings"}/savings`} />
         </Section>
       </List>
     </>
   );
 }
 
-function Detalhe({ titulo, voltar }: { titulo: string; voltar: string }) {
+export function Conta({ nome, voltar }: { nome: string; voltar: string }) {
   return (
     <>
-      <NavigationBar title={titulo} backHref={`#${voltar}`} />
+      <NavigationBar title={nome === "savings" ? "Savings" : "Everyday"} backHref={`#${voltar}`} />
       <List>
-        {[1, 2, 3].map((s) => (
-          <Section key={s} header={`Group ${s}`}>
-            {[1, 2, 3, 4].map((i) => (
-              <Row key={i} title={`Option ${i}`} value={i % 2 ? "On" : "Off"} />
-            ))}
-          </Section>
-        ))}
+        <Section header="Details">
+          <Row title="Account number" value={nome === "savings" ? "·· 0937" : "·· 4821"} />
+          <Row title="Interest" value={nome === "savings" ? "4.1% APY" : "0.1% APY"} />
+          <Row title="Statements" href={`#${voltar}/${nome}`} />
+        </Section>
+        <Section header="Cards">
+          <Row icon={CARTAO} iconColor="var(--st-gray)" title="Debit card" subtitle="Expires 08/29" />
+        </Section>
       </List>
     </>
   );
 }
 
 const ABAS = [
-  { id: "orders", label: "Orders", icon: PASTA, href: "#/orders", badge: 3 },
-  { id: "clients", label: "Clients", icon: PESSOAS, href: "#/clients" },
+  { id: "home", label: "Home", icon: CASA, href: "#/home" },
+  { id: "activity", label: "Activity", icon: LISTA, href: "#/activity" },
   { id: "settings", label: "Settings", icon: ENGRENAGEM, href: "#/settings" },
 ];
 
 function tela(caminho: string) {
   const [, aba, detalhe] = caminho.split("/");
-  if (aba === "orders") return detalhe ? <Pedido id={detalhe} /> : <Pedidos />;
-  if (aba === "clients") return <Clientes />;
-  if (detalhe) return <Detalhe titulo={detalhe === "wifi" ? "Wi-Fi" : "Privacy & Security"} voltar="/settings" />;
-  return <Ajustes />;
+  if (aba === "activity") return detalhe ? <Detalhe id={detalhe} /> : <Atividade />;
+  if (aba === "settings") return detalhe ? <Conta nome={detalhe} voltar="/settings" /> : <Ajustes />;
+  return <Inicio />;
 }
 
-/** The whole app: tabs, a pushed screen, sheets, a menu, toasts and a 20,000-row list. */
+/** The whole app: tabs, pushed screens, a create/edit form, delete with an alert, toasts and 20,000 rows. */
 export function DemoApp() {
-  const caminho = useHash("/orders");
-  const aba = caminho.split("/")[1] || "orders";
+  const caminho = useHash("/home");
+  const aba = caminho.split("/")[1] || "home";
   return (
-    <>
+    <ProvedorLoja>
       <NavigationStack location={caminho} render={(l) => <div style={{ paddingBottom: 112 }}>{tela(l)}</div>} />
       <TabBar items={ABAS} selection={aba} hidden={caminho.split("/").filter(Boolean).length > 1} />
-    </>
+    </ProvedorLoja>
+  );
+}
+
+/** Just the activity: 20,000 transactions, search, filter, the detail and the form. */
+export function DemoLists() {
+  const caminho = useHash("/activity");
+  return (
+    <ProvedorLoja>
+      <NavigationStack location={caminho} render={(l) => <div style={{ paddingBottom: 32 }}>{l.split("/")[2] ? <Detalhe id={l.split("/")[2]} /> : <Atividade />}</div>} />
+    </ProvedorLoja>
   );
 }
 
 export function DemoNavigation() {
   const caminho = useHash("/settings");
-  return <NavigationStack location={caminho} render={(l) => <div style={{ paddingBottom: 32 }}>{l.split("/")[2] ? <Detalhe titulo={l.split("/")[2] === "wifi" ? "Wi-Fi" : "Privacy & Security"} voltar="/settings" /> : <Ajustes />}</div>} />;
-}
-
-/** Just the orders: 20,000 rows, search, filter and the order screen. */
-export function DemoLists() {
-  const caminho = useHash("/orders");
-  return <NavigationStack location={caminho} render={(l) => <div style={{ paddingBottom: 32 }}>{l.split("/")[2] ? <Pedido id={l.split("/")[2]} /> : <Pedidos />}</div>} />;
+  return <NavigationStack location={caminho} render={(l) => <div style={{ paddingBottom: 32 }}>{l.split("/")[2] ? <Conta nome={l.split("/")[2]} voltar="/settings" /> : <Ajustes />}</div>} />;
 }

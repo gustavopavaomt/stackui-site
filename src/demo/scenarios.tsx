@@ -25,20 +25,22 @@ import {
   type ButtonState,
 } from "@stackui/react";
 
-import { CIDADES } from "./data";
-import { CAIXA, COMPARTILHAR, COPIAR } from "./icons";
+import { CATEGORIAS, type Categoria } from "./data";
+import { COMPARTILHAR, COPIAR, DOCUMENTO, ICONES_CATEGORIA } from "./icons";
 
 export function DemoSheets() {
   const [aberta, setAberta] = useState<"" | "share" | "confirm" | "options" | "alert">("");
   const [estado, setEstado] = useState<ButtonState>("idle");
-  const [ordem, setOrdem] = useState<"name" | "date" | "total">("date");
+  const [ordem, setOrdem] = useState<"date" | "amount" | "name">("date");
+  const { show } = useToast();
   const fechar = () => setAberta("");
-  const confirmar = () => {
+  const transferir = () => {
     setEstado("loading");
     window.setTimeout(() => setEstado("done"), 1000);
     window.setTimeout(() => {
       fechar();
       setEstado("idle");
+      show("$250.00 sent to Ana");
     }, 1900);
   };
   return (
@@ -46,33 +48,35 @@ export function DemoSheets() {
       <NavigationBar title="Sheets" />
       <List>
         <Section header="Drag the handle down to close" footer="Esc, a tap outside and the Android back gesture close them too.">
-          <Row title="Share" onClick={() => setAberta("share")} chevron />
-          <Row title="Confirm before saving" onClick={() => setAberta("confirm")} chevron />
-          <Row title="Sort by" value={{ name: "Name", date: "Date", total: "Total" }[ordem]} onClick={() => setAberta("options")} chevron />
-          <Row title="Delete order" destructive onClick={() => setAberta("alert")} />
+          <Row title="Share statement" onClick={() => setAberta("share")} chevron />
+          <Row title="Send $250 to Ana" onClick={() => setAberta("confirm")} chevron />
+          <Row title="Sort by" value={{ date: "Date", amount: "Amount", name: "Name" }[ordem]} onClick={() => setAberta("options")} chevron />
+          <Row title="Remove card" destructive onClick={() => setAberta("alert")} />
         </Section>
       </List>
-      <Sheet isPresented={aberta === "share"} onDismiss={fechar} title="Share" icon={COMPARTILHAR} description="Send this order to the client.">
+      <Sheet isPresented={aberta === "share"} onDismiss={fechar} title="Share" icon={COMPARTILHAR} description="October statement, PDF, 2 pages.">
         <List>
           <Section>
             <Row icon={COPIAR} iconColor="var(--st-gray)" title="Copy link" onClick={fechar} />
-            <Row icon={CAIXA} iconColor="var(--st-green)" title="Send by message" onClick={fechar} />
+            <Row icon={DOCUMENTO} iconColor="var(--st-blue)" title="Save to Files" onClick={fechar} />
           </Section>
         </List>
       </Sheet>
       <ConfirmationSheet
         isPresented={aberta === "confirm"}
         onDismiss={fechar}
-        onConfirm={confirmar}
+        onConfirm={transferir}
         state={estado}
-        title="Save visit"
+        title="Send money"
+        description="Check the details before sending."
         items={[
-          { label: "Client", value: "Pão Quente" },
-          { label: "Date", value: "Today, 10:30" },
+          { label: "To", value: "Ana Souza" },
+          { label: "From", value: "Everyday ·· 4821" },
+          { label: "Amount", value: "$250.00" },
         ]}
-        confirmLabel="Save"
-        loadingLabel="Saving…"
-        doneLabel="Saved"
+        confirmLabel="Send"
+        loadingLabel="Sending…"
+        doneLabel="Sent"
       />
       <OptionsSheet
         isPresented={aberta === "options"}
@@ -81,21 +85,21 @@ export function DemoSheets() {
         selection={ordem}
         onChange={setOrdem}
         options={[
-          { value: "name", label: "Name" },
           { value: "date", label: "Date", description: "Newest first" },
-          { value: "total", label: "Total", description: "Largest first" },
+          { value: "amount", label: "Amount", description: "Largest first" },
+          { value: "name", label: "Name" },
         ]}
       />
-      <Alert isPresented={aberta === "alert"} onDismiss={fechar} title="Delete this order?" message="It leaves this phone and cannot be recovered." actions={[{ label: "Cancel", role: "cancel" }, { label: "Delete", role: "destructive" }]} />
+      <Alert isPresented={aberta === "alert"} onDismiss={fechar} title="Remove this card?" message="You can add it again at any time." actions={[{ label: "Cancel", role: "cancel" }, { label: "Remove", role: "destructive" }]} />
     </>
   );
 }
 
 export function DemoControls() {
-  const [avisos, setAvisos] = useState(true);
-  const [modo, setModo] = useState<"delivery" | "pickup">("delivery");
-  const [qtd, setQtd] = useState(2);
-  const [email, setEmail] = useState("");
+  const [faceId, setFaceId] = useState(true);
+  const [tipo, setTipo] = useState<"expense" | "income">("expense");
+  const [parcelas, setParcelas] = useState(3);
+  const [valor, setValor] = useState("");
   const [estado, setEstado] = useState<ButtonState>("idle");
   const salvar = () => {
     setEstado("loading");
@@ -106,37 +110,32 @@ export function DemoControls() {
     <>
       <NavigationBar title="Controls" />
       <List>
+        <Picker
+          selection={tipo}
+          onChange={setTipo}
+          label="Type"
+          options={[
+            { value: "expense", label: "Expense" },
+            { value: "income", label: "Income" },
+          ]}
+        />
         <Section>
-          <div style={{ padding: "12px 16px" }}>
-            <Picker
-              selection={modo}
-              onChange={setModo}
-              label="Mode"
-              options={[
-                { value: "delivery", label: "Delivery" },
-                { value: "pickup", label: "Pickup" },
-              ]}
-            />
-          </div>
-          <Row title="Notifications" accessory={<Toggle isOn={avisos} onChange={setAvisos} label="Notifications" />} />
-          <Row title="Boxes" accessory={<Stepper value={qtd} onChange={setQtd} label="Boxes" />} />
-        </Section>
-        <Section header="Contact">
-          <TextField label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} error={email && !email.includes("@") ? "Type a valid email" : undefined} />
-          <TextField label="Phone" type="tel" />
+          <TextField label="Amount" inputMode="decimal" value={valor} onChange={(e) => setValor(e.target.value)} error={valor && !(Number(valor.replace(",", ".")) > 0) ? "Type a number" : undefined} />
+          <Row title="Installments" accessory={<Stepper value={parcelas} onChange={setParcelas} label="Installments" min={1} max={12} />} />
+          <Row title="Face ID to confirm" accessory={<Toggle isOn={faceId} onChange={setFaceId} label="Face ID to confirm" />} />
         </Section>
         <Section header="Status">
           <HStack spacing={8} style={{ padding: 16, flexWrap: "wrap" }}>
-            <Badge>Draft</Badge>
-            <Badge tone="tint">New</Badge>
-            <Badge tone="success">Sent</Badge>
+            <Badge tone="success">Paid</Badge>
             <Badge tone="warning">Pending</Badge>
-            <Badge tone="danger">Rejected</Badge>
+            <Badge tone="tint">Scheduled</Badge>
+            <Badge tone="danger">Declined</Badge>
+            <Badge>Draft</Badge>
           </HStack>
         </Section>
         <VStack spacing={8}>
           <Button size="large" state={estado} onClick={salvar} loadingLabel="Saving…" doneLabel="Saved">
-            Save changes
+            Save
           </Button>
           <Button size="large" variant="plain">
             Cancel
@@ -149,9 +148,9 @@ export function DemoControls() {
 
 export function DemoToasts() {
   const { show } = useToast();
-  const enviar = () => {
-    const t = show("Sending 3 orders…", "progress");
-    window.setTimeout(() => t.update("3 orders sent", "success", { label: "View", onPress: () => undefined }), 1800);
+  const transferir = () => {
+    const t = show("Sending $120.00…", "progress");
+    window.setTimeout(() => t.update("$120.00 sent to Leo", "success", { label: "Receipt", onPress: () => undefined }), 1800);
   };
   return (
     <>
@@ -159,14 +158,14 @@ export function DemoToasts() {
       <List>
         <Section footer="One at a time: a new toast waits for the current one to leave.">
           <VStack spacing={10} style={{ padding: 16 }}>
-            <Button onClick={enviar}>Send with progress</Button>
-            <Button variant="bordered" onClick={() => show("Saved on this phone")}>
+            <Button onClick={transferir}>Send money</Button>
+            <Button variant="bordered" onClick={() => show("Budget saved")}>
               Success
             </Button>
-            <Button variant="bordered" onClick={() => show("No signal: it goes up later", "info")}>
+            <Button variant="bordered" onClick={() => show("Offline: it syncs when you are back", "info")}>
               Info
             </Button>
-            <Button variant="destructive" onClick={() => show("The company did not accept it", "error", { label: "Why", onPress: () => undefined })}>
+            <Button variant="destructive" onClick={() => show("Card declined", "error", { label: "Why", onPress: () => undefined })}>
               Error with an action
             </Button>
           </VStack>
@@ -176,28 +175,30 @@ export function DemoToasts() {
   );
 }
 
+const TODAS: Categoria[] = ["groceries", "dining", "transport", "shopping", "bills", "health", "travel", "fun", "salary", "transfer"];
+
 export function DemoPickers() {
   const [data, setData] = useState("");
   const [hora, setHora] = useState("");
-  const [cidade, setCidade] = useState("");
+  const [categoria, setCategoria] = useState<Categoria | "">("");
   const [escolhendo, setEscolhendo] = useState(false);
   return (
     <>
       <NavigationBar title="Pickers" />
       <List>
-        <Section header="Delivery" footer="The same on iPhone and Android, in any language.">
-          <PickerRow label="City" value={cidade} onClick={() => setEscolhendo(true)} />
-          <Row title="Date" accessory={<DatePicker value={data} onChange={setData} title="Delivery date" locale="en-US" />} />
-          <Row title="Time" accessory={<TimePicker value={hora} onChange={setHora} title="Delivery time" />} />
+        <Section header="Schedule a payment" footer="The same on iPhone and Android, in any language.">
+          <PickerRow label="Category" value={categoria ? CATEGORIAS[categoria].nome : ""} onClick={() => setEscolhendo(true)} />
+          <Row title="Date" accessory={<DatePicker value={data} onChange={setData} title="Payment date" locale="en-US" shortcuts={[]} />} />
+          <Row title="Time" accessory={<TimePicker value={hora} onChange={setHora} title="Payment time" />} />
         </Section>
       </List>
-      <Sheet isPresented={escolhendo} onDismiss={() => setEscolhendo(false)} title="City">
+      <Sheet isPresented={escolhendo} onDismiss={() => setEscolhendo(false)} title="Category">
         <ListPicker
-          label="City"
-          options={CIDADES.map((c) => ({ value: c, label: c }))}
-          selection={cidade}
+          label="Category"
+          options={TODAS.map((c) => ({ value: c, label: CATEGORIAS[c].nome, icon: ICONES_CATEGORIA[c] }))}
+          selection={categoria}
           onChange={(c) => {
-            setCidade(c);
+            setCategoria(c);
             setEscolhendo(false);
           }}
         />
@@ -205,4 +206,3 @@ export function DemoPickers() {
     </>
   );
 }
-

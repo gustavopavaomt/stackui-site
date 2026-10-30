@@ -8,12 +8,12 @@ Created by [Gustavo Pavão](https://github.com/gustavopavaomt).
 ## How it is made
 
 - **The page has its own layout and CSS** (`src/landing`). It does not use the library for itself.
-- **The library runs inside the phones.** Each phone is an iframe of `demo.html` (`src/demo`), a small app built
-  with `@stackui/react`, one scenario per phone (`?d=app`, `navigation`, `sheets`, `controls`, `toasts`, `pickers`,
-  `lists`). The iframe keeps sheets, the tab bar and toasts inside their phone. It is laid out at a real phone width
+- **The library runs inside the phones.** Each phone is an iframe of `demo.html` (`src/demo`): Wallet, a small
+  finance app built with `@stackui/react` (balance, 20,000 transactions, create, edit and delete), plus one scenario
+  per phone (`?d=app`, `navigation`, `sheets`, `controls`, `toasts`, `pickers`, `lists`). All data is invented. The iframe keeps sheets, the tab bar and toasts inside their phone. It is laid out at a real phone width
   (390 px) and scaled down to the frame.
-- The accent and appearance pickers send `{ type: "stackui-theme", tint, theme }` to every phone (`postMessage`,
-  same origin only).
+- The color picker under the “Make it yours” phone sends `{ type: "stackui-theme", tint, theme }` to it
+  (`postMessage`, same origin only).
 
 ## Develop
 
