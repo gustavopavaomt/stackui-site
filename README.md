@@ -20,7 +20,7 @@ Created by [Gustavo Pavão](https://github.com/gustavopavaomt).
 `#/docs/<page>` is the documentation, in the spirit of reactnative.dev: guides (The Basics) and one page per
 component, each with a live example next to its code and the props reference.
 
-- Pages are Markdown in `src/site/content/`, in the sidebar order of `src/site/docs.ts`.
+- Pages are Markdown in `src/site/content/en/` and `src/site/content/pt/` (Brazilian Portuguese), in the sidebar order of `src/site/docs.ts`. The flags switch the language; the first visit follows the browser.
 - `@example <name> <height>` before a code fence shows the live example `demo.html?c=<name>`
   (`src/demo/previews.tsx`) next to that code. Keep both in sync.
 - `@props <Component>` renders the reference from `src/site/props.ts`.

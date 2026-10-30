@@ -1,104 +1,115 @@
-/* The docs: the sidebar, in order, and each page's Markdown (src/site/content/<slug>.md). */
+/* The docs: the sidebar, in order, and each page's Markdown (src/site/content/<en|pt>/<slug>.md). */
+import type { Lang } from "./i18n";
 
-const arquivos = import.meta.glob("./content/*.md", { query: "?raw", import: "default", eager: true }) as Record<string, string>;
+const EN = import.meta.glob("./content/en/*.md", { query: "?raw", import: "default", eager: true }) as Record<string, string>;
+const PT = import.meta.glob("./content/pt/*.md", { query: "?raw", import: "default", eager: true }) as Record<string, string>;
 
 export type Pagina = { slug: string; titulo: string; md: string };
 export type Grupo = { titulo: string; paginas: Pagina[] };
 
-const GRUPOS: [string, [string, string][]][] = [
+/** [slug, English title, Portuguese title] */
+type Item = [string, string, string];
+
+const GRUPOS: [[string, string], Item[]][] = [
   [
-    "The Basics",
+    ["The Basics", "O básico"],
     [
-      ["introduction", "Introduction"],
-      ["installation", "Installation"],
-      ["layout", "Layout"],
-      ["navigation", "Navigation"],
-      ["lists", "Lists"],
-      ["forms", "Forms and input"],
-      ["presentation", "Sheets and alerts"],
-      ["feedback", "Feedback"],
-      ["theming", "Theming"],
-      ["pwa", "Installable apps"],
-      ["accessibility", "Accessibility"],
+      ["introduction", "Introduction", "Introdução"],
+      ["installation", "Installation", "Instalação"],
+      ["layout", "Layout", "Layout"],
+      ["navigation", "Navigation", "Navegação"],
+      ["lists", "Lists", "Listas"],
+      ["forms", "Forms and input", "Formulários"],
+      ["presentation", "Sheets and alerts", "Folhas e alertas"],
+      ["feedback", "Feedback", "Retorno"],
+      ["theming", "Theming", "Temas"],
+      ["pwa", "Installable apps", "Apps instaláveis"],
+      ["accessibility", "Accessibility", "Acessibilidade"],
     ],
   ],
-  ["Layout", [["text-and-stacks", "Text and stacks"]]],
+  [["Layout", "Layout"], [["text-and-stacks", "Text and stacks", "Texto e pilhas"]]],
   [
-    "Navigation",
+    ["Navigation", "Navegação"],
     [
-      ["navigation-stack", "NavigationStack"],
-      ["navigation-bar", "NavigationBar"],
-      ["tab-bar", "TabBar"],
-      ["menu", "Menu"],
-    ],
-  ],
-  [
-    "Lists",
-    [
-      ["list", "List and Row"],
-      ["lazy-list", "LazyList"],
-      ["card", "Card"],
+      ["navigation-stack", "NavigationStack", "NavigationStack"],
+      ["navigation-bar", "NavigationBar", "NavigationBar"],
+      ["tab-bar", "TabBar", "TabBar"],
+      ["menu", "Menu", "Menu"],
     ],
   ],
   [
-    "Controls",
+    ["Lists", "Listas"],
     [
-      ["button", "Button"],
-      ["toggle", "Toggle"],
-      ["picker", "Picker"],
-      ["stepper", "Stepper"],
-      ["text-field", "TextField"],
-      ["search-field", "SearchField"],
-      ["badge", "Badge"],
+      ["list", "List and Row", "List e Row"],
+      ["lazy-list", "LazyList", "LazyList"],
+      ["card", "Card", "Card"],
     ],
   ],
   [
-    "Choosing",
+    ["Controls", "Controles"],
     [
-      ["date-picker", "DatePicker"],
-      ["time-picker", "TimePicker"],
-      ["list-picker", "ListPicker"],
-      ["options-sheet", "OptionsSheet"],
+      ["button", "Button", "Button"],
+      ["toggle", "Toggle", "Toggle"],
+      ["picker", "Picker", "Picker"],
+      ["stepper", "Stepper", "Stepper"],
+      ["text-field", "TextField", "TextField"],
+      ["search-field", "SearchField", "SearchField"],
+      ["badge", "Badge", "Badge"],
     ],
   ],
   [
-    "Presentation",
+    ["Choosing", "Seletores"],
     [
-      ["sheet", "Sheet"],
-      ["confirmation-sheet", "ConfirmationSheet"],
-      ["alert", "Alert"],
+      ["date-picker", "DatePicker", "DatePicker"],
+      ["time-picker", "TimePicker", "TimePicker"],
+      ["list-picker", "ListPicker", "ListPicker"],
+      ["options-sheet", "OptionsSheet", "OptionsSheet"],
     ],
   ],
   [
-    "Feedback",
+    ["Presentation", "Apresentação"],
     [
-      ["toast", "Toast"],
-      ["redacted", "Skeleton and Redacted"],
-      ["progress-view", "ProgressView"],
-      ["content-unavailable-view", "ContentUnavailableView"],
-      ["timeline", "Timeline"],
-      ["progress-steps", "ProgressSteps"],
+      ["sheet", "Sheet", "Sheet"],
+      ["confirmation-sheet", "ConfirmationSheet", "ConfirmationSheet"],
+      ["alert", "Alert", "Alert"],
     ],
   ],
   [
-    "Media",
+    ["Feedback", "Retorno"],
     [
-      ["avatar", "Avatar"],
-      ["async-image", "AsyncImage"],
+      ["toast", "Toast", "Toast"],
+      ["redacted", "Skeleton and Redacted", "Skeleton e Redacted"],
+      ["progress-view", "ProgressView", "ProgressView"],
+      ["content-unavailable-view", "ContentUnavailableView", "ContentUnavailableView"],
+      ["timeline", "Timeline", "Timeline"],
+      ["progress-steps", "ProgressSteps", "ProgressSteps"],
     ],
   ],
   [
-    "PWA",
+    ["Media", "Mídia"],
     [
-      ["install-gate", "InstallGate"],
-      ["barcode-scanner", "BarcodeScanner"],
+      ["avatar", "Avatar", "Avatar"],
+      ["async-image", "AsyncImage", "AsyncImage"],
+    ],
+  ],
+  [
+    ["PWA", "PWA"],
+    [
+      ["install-gate", "InstallGate", "InstallGate"],
+      ["barcode-scanner", "BarcodeScanner", "BarcodeScanner"],
     ],
   ],
 ];
 
-export const DOCS: Grupo[] = GRUPOS.map(([titulo, paginas]) => ({
-  titulo,
-  paginas: paginas.map(([slug, t]) => ({ slug, titulo: t, md: arquivos[`./content/${slug}.md`] ?? `# ${t}\n\nComing soon.` })),
-}));
-
-export const TODAS = DOCS.flatMap((g) => g.paginas);
+/** The docs in one language (a page missing in Portuguese falls back to English). */
+export function docs(lang: Lang): Grupo[] {
+  const pt = lang === "pt";
+  return GRUPOS.map(([[en, ptTitulo], itens]) => ({
+    titulo: pt ? ptTitulo : en,
+    paginas: itens.map(([slug, tEn, tPt]) => ({
+      slug,
+      titulo: pt ? tPt : tEn,
+      md: (pt ? PT[`./content/pt/${slug}.md`] : undefined) ?? EN[`./content/en/${slug}.md`] ?? `# ${tEn}`,
+    })),
+  }));
+}

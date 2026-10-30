@@ -2,6 +2,8 @@ import { StrictMode, useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 
 import { DocsPage } from "../site/docs-page";
+import { Flags, LangProvider, useLang, useT } from "../site/i18n";
+import { Marca } from "../site/marca";
 
 import "./landing.css";
 
@@ -20,25 +22,61 @@ const LARGURA_APARELHO = 390;
 type Tema = "light" | "dark";
 
 const CORES = [
-  { nome: "Blue", valor: "#0a84ff" },
-  { nome: "Green", valor: "#30d158" },
-  { nome: "Orange", valor: "#ff9f0a" },
-  { nome: "Red", valor: "#ff453a" },
-  { nome: "White", valor: "#8e8e93" },
-];
+  { nome: ["Blue", "Azul"], valor: "#0a84ff" },
+  { nome: ["Green", "Verde"], valor: "#30d158" },
+  { nome: ["Orange", "Laranja"], valor: "#ff9f0a" },
+  { nome: ["Red", "Vermelho"], valor: "#ff453a" },
+  { nome: ["Gray", "Cinza"], valor: "#8e8e93" },
+] as const;
 
-/** One full-screen section per subject, like a mission page. */
+/** One full-screen section per subject, like a mission page: [English, Portuguese]. */
 const MISSOES = [
-  { id: "navigation", demo: "navigation", rotulo: "Navigation", titulo: "Screens that slide", texto: "Push a screen in, slide it back out, right where you left off. Works with any router.", docs: "navigation" },
-  { id: "sheets", demo: "sheets", rotulo: "Sheets and alerts", titulo: "Drag to dismiss", texto: "Sheets that follow your finger, confirmations that show their own progress, alerts when it matters.", docs: "presentation" },
-  { id: "controls", demo: "controls", rotulo: "Controls", titulo: "Forms that feel native", texto: "Segmented pickers, fields with floating labels, steppers, switches and a button that says when it is done.", docs: "forms" },
-  { id: "toasts", demo: "toasts", rotulo: "Feedback", titulo: "Sending… Sent.", texto: "Toasts that wait in line and change in place while the work happens.", docs: "feedback" },
-  { id: "pickers", demo: "pickers", rotulo: "Pickers", titulo: "Any date. Any list.", texto: "Calendars, time wheels and searchable lists, the same on every phone, in any language.", docs: "list-picker" },
-];
+  {
+    id: "navigation",
+    demo: "navigation",
+    docs: "navigation",
+    rotulo: ["Navigation", "Navegação"],
+    titulo: ["Screens that slide", "Telas que deslizam"],
+    texto: ["Push a screen in, slide it back out, right where you left off. Works with any router.", "Abra uma tela, volte deslizando, exatamente de onde parou. Funciona com qualquer roteador."],
+  },
+  {
+    id: "sheets",
+    demo: "sheets",
+    docs: "presentation",
+    rotulo: ["Sheets and alerts", "Folhas e alertas"],
+    titulo: ["Drag to dismiss", "Arraste para fechar"],
+    texto: ["Sheets that follow your finger, confirmations that show their own progress, alerts when it matters.", "Folhas que seguem o dedo, confirmações que mostram o próprio progresso e alertas quando importa."],
+  },
+  {
+    id: "controls",
+    demo: "controls",
+    docs: "forms",
+    rotulo: ["Controls", "Controles"],
+    titulo: ["Forms that feel native", "Formulários de app nativo"],
+    texto: ["Segmented pickers, fields with floating labels, steppers, switches and a button that says when it is done.", "Seletores segmentados, campos com rótulo flutuante, contadores, chaves e um botão que avisa quando terminou."],
+  },
+  {
+    id: "toasts",
+    demo: "toasts",
+    docs: "feedback",
+    rotulo: ["Feedback", "Retorno"],
+    titulo: ["Sending… Sent.", "Enviando… Enviado."],
+    texto: ["Toasts that wait in line and change in place while the work happens.", "Avisos que esperam a vez e mudam no lugar enquanto o trabalho acontece."],
+  },
+  {
+    id: "pickers",
+    demo: "pickers",
+    docs: "list-picker",
+    rotulo: ["Pickers", "Seletores"],
+    titulo: ["Any date. Any list.", "Qualquer data. Qualquer lista."],
+    texto: ["Calendars, time wheels and searchable lists, the same on every phone, in any language.", "Calendários, rodas de hora e listas com busca, iguais em qualquer celular, em qualquer idioma."],
+  },
+] as const;
 
 /** A phone running one demo. Colors arrive in the URL first, then by message (the demo keeps its state). */
 function Phone({ demo, titulo, tint = CORES[0].valor, tema = "dark" }: { demo: string; titulo: string; tint?: string; tema?: Tema }) {
-  const [src] = useState(() => `${BASE}demo.html?d=${demo}&tint=${encodeURIComponent(tint)}&theme=${tema}`);
+  const { lang } = useLang();
+  const [src] = useState(() => `${BASE}demo.html?d=${demo}&lang=${lang}&tint=${encodeURIComponent(tint)}&theme=${tema}`);
   const quadro = useRef<HTMLIFrameElement>(null);
   const tela = useRef<HTMLDivElement>(null);
   const [caixa, setCaixa] = useState({ escala: 1, altura: 0 });
@@ -87,6 +125,7 @@ function Phone({ demo, titulo, tint = CORES[0].valor, tema = "dark" }: { demo: s
 }
 
 function Copiar() {
+  const t = useT();
   const [copiado, setCopiado] = useState(false);
   const copiar = async () => {
     try {
@@ -98,20 +137,10 @@ function Copiar() {
     }
   };
   return (
-    <button type="button" className="cmd" onClick={copiar} aria-label={`Copy: ${INSTALAR}`}>
+    <button type="button" className="cmd" onClick={copiar} aria-label={`${t("Copy", "Copiar")}: ${INSTALAR}`}>
       <code>{INSTALAR}</code>
-      <span aria-live="polite">{copiado ? "Copied" : "Copy"}</span>
+      <span aria-live="polite">{copiado ? t("Copied", "Copiado") : t("Copy", "Copiar")}</span>
     </button>
-  );
-}
-
-function Marca() {
-  return (
-    <svg viewBox="0 0 64 64" width={22} height={22} aria-hidden>
-      <rect x="6" y="10" width="52" height="11" rx="5.5" fill="currentColor" />
-      <rect x="6" y="26.5" width="52" height="11" rx="5.5" fill="currentColor" opacity=".75" />
-      <rect x="6" y="43" width="32" height="11" rx="5.5" fill="currentColor" opacity=".5" />
-    </svg>
   );
 }
 
@@ -134,70 +163,94 @@ export function Settings() {
   );
 }`;
 
+const CODIGO_PT = `import "@stackui/react/styles.css";
+import { App, List, NavigationBar, Row, Section, Toggle } from "@stackui/react";
+
+export function Ajustes() {
+  const [avisos, setAvisos] = useState(true);
+  return (
+    <App>
+      <NavigationBar title="Ajustes" />
+      <List>
+        <Section header="Geral">
+          <Row title="Notificações"
+            accessory={<Toggle isOn={avisos} onChange={setAvisos} />} />
+          <Row title="Idioma" value="Português" href="/idioma" />
+        </Section>
+      </List>
+    </App>
+  );
+}`;
+
 function Landing() {
-  const [cor, setCor] = useState(CORES[0]);
+  const { lang } = useLang();
+  const t = useT();
+  const i = lang === "pt" ? 1 : 0;
+  const [cor, setCor] = useState<(typeof CORES)[number]>(CORES[0]);
   const [tema, setTema] = useState<Tema>("dark");
 
   return (
-    <>
+    // Remount on a language switch: the phones reload in the new language.
+    <div key={lang}>
       <header className="nav">
         <a href="#top" className="nav__brand">
           <Marca />
           STACKUI
         </a>
-        <nav className="nav__links" aria-label="Site">
-          <a href="#/docs/introduction">Docs</a>
-          <a href="#/docs/text-and-stacks">Components</a>
-          <a href="#numbers">Specs</a>
+        <nav className="nav__links" aria-label={t("Site", "Site")}>
+          <a href="#/docs/introduction">{t("Docs", "Docs")}</a>
+          <a href="#/docs/text-and-stacks">{t("Components", "Componentes")}</a>
+          <a href="#numbers">{t("Specs", "Specs")}</a>
           <a href={GITHUB}>GitHub</a>
         </nav>
         <a href="#/docs/introduction" className="nav__cta">
-          Get started
+          {t("Get started", "Começar")}
         </a>
+        <Flags />
       </header>
 
       <main id="top">
         <section className="stage stage--hero">
           <div className="stage__device">
-            <Phone demo="app" titulo="Wallet, a finance app built with StackUI. It is live: tap it." />
+            <Phone demo="app" titulo={t("Wallet, a finance app built with StackUI. It is live: tap it.", "Wallet, um app de finanças feito com StackUI. Está rodando: toque nele.")} />
           </div>
           <div className="stage__copy">
             <p className="stage__label">@stackui/react</p>
             <h1 className="stage__title">
-              Native feel.
+              {t("Native feel.", "Cara de nativo.")}
               <br />
-              No app store.
+              {t("No app store.", "Sem loja de apps.")}
             </h1>
-            <p className="stage__text">Build dynamic and elegant PWA applications for iOS and Android with React.</p>
+            <p className="stage__text">{t("Build dynamic and elegant PWA applications for iOS and Android with React.", "Crie aplicativos PWA dinâmicos e elegantes para iOS e Android com React.")}</p>
             <div className="stage__actions">
               <a href="#/docs/introduction" className="btn">
-                Get started
+                {t("Get started", "Começar")}
               </a>
               <Copiar />
             </div>
             <p className="stage__credit">
-              Created by <a href={AUTOR}>Gustavo Pavão</a>
+              {t("Created by", "Criado por")} <a href={AUTOR}>Gustavo Pavão</a>
             </p>
           </div>
-          <a href="#navigation" className="stage__scroll" aria-label="Scroll down">
+          <a href="#navigation" className="stage__scroll" aria-label={t("Scroll down", "Rolar para baixo")}>
             <span />
           </a>
         </section>
 
-        {MISSOES.map((m, i) => (
-          <section key={m.id} id={m.id} className={`stage${i % 2 ? " stage--flip" : ""}`}>
+        {MISSOES.map((m, n) => (
+          <section key={m.id} id={m.id} className={`stage${n % 2 ? " stage--flip" : ""}`}>
             <div className="stage__device">
-              <Phone demo={m.demo} titulo={`${m.rotulo}: a live screen of Wallet, built with StackUI`} />
+              <Phone demo={m.demo} titulo={`${m.rotulo[i]}: ${t("a live screen of Wallet, built with StackUI", "uma tela da Wallet rodando, feita com StackUI")}`} />
             </div>
             <div className="stage__copy">
               <p className="stage__label">
-                {String(i + 1).padStart(2, "0")} / {m.rotulo}
+                {String(n + 1).padStart(2, "0")} / {m.rotulo[i]}
               </p>
-              <h2 className="stage__title">{m.titulo}</h2>
-              <p className="stage__text">{m.texto}</p>
+              <h2 className="stage__title">{m.titulo[i]}</h2>
+              <p className="stage__text">{m.texto[i]}</p>
               <div className="stage__actions">
                 <a href={`#/docs/${m.docs}`} className="btn">
-                  Learn more
+                  {t("Learn more", "Saiba mais")}
                 </a>
               </div>
             </div>
@@ -206,15 +259,20 @@ function Landing() {
 
         <section className="stage stage--lists">
           <div className="stage__device">
-            <Phone demo="lists" titulo="A list of 20,000 transactions" />
+            <Phone demo="lists" titulo={t("A list of 20,000 transactions", "Uma lista de 20 mil lançamentos")} />
           </div>
           <div className="stage__copy">
-            <p className="stage__label">06 / Performance</p>
-            <h2 className="stage__title">20,000 rows</h2>
-            <p className="stage__text">Only what is on screen exists. Every cell is recycled, the way native lists do it. Scroll as fast as you like.</p>
+            <p className="stage__label">06 / {t("Performance", "Desempenho")}</p>
+            <h2 className="stage__title">{t("20,000 rows", "20 mil linhas")}</h2>
+            <p className="stage__text">
+              {t(
+                "Only what is on screen exists. Every cell is recycled, the way native lists do it. Scroll as fast as you like.",
+                "Só existe o que está na tela. Cada célula é reaproveitada, como nas listas nativas. Role o quanto quiser.",
+              )}
+            </p>
             <div className="stage__actions">
               <a href="#/docs/lazy-list" className="btn">
-                Learn more
+                {t("Learn more", "Saiba mais")}
               </a>
             </div>
           </div>
@@ -225,19 +283,19 @@ function Landing() {
           <dl className="numbers__row">
             <div>
               <dt>51</dt>
-              <dd>Components</dd>
+              <dd>{t("Components", "Componentes")}</dd>
             </div>
             <div>
               <dt>1</dt>
-              <dd>Dependency</dd>
+              <dd>{t("Dependency", "Dependência")}</dd>
             </div>
             <div>
               <dt>0</dt>
-              <dd>Install scripts</dd>
+              <dd>{t("Install scripts", "Scripts de instalação")}</dd>
             </div>
             <div>
               <dt>20K</dt>
-              <dd>Rows, smooth</dd>
+              <dd>{t("Rows, smooth", "Linhas, sem travar")}</dd>
             </div>
           </dl>
           <dl className="specs">
@@ -246,23 +304,23 @@ function Landing() {
               <dd>React 19</dd>
             </div>
             <div>
-              <dt>Platforms</dt>
-              <dd>iOS, Android, desktop browsers</dd>
+              <dt>{t("Platforms", "Plataformas")}</dt>
+              <dd>{t("iOS, Android, desktop browsers", "iOS, Android, navegadores de computador")}</dd>
             </div>
             <div>
-              <dt>Styling</dt>
-              <dd>One stylesheet, CSS variables</dd>
+              <dt>{t("Styling", "Estilo")}</dt>
+              <dd>{t("One stylesheet, CSS variables", "Um arquivo CSS, variáveis CSS")}</dd>
             </div>
             <div>
-              <dt>Routing</dt>
-              <dd>Any router, or none</dd>
+              <dt>{t("Routing", "Rotas")}</dt>
+              <dd>{t("Any router, or none", "Qualquer roteador, ou nenhum")}</dd>
             </div>
             <div>
-              <dt>Accessibility</dt>
-              <dd>Real dialogs, focus, reduced motion</dd>
+              <dt>{t("Accessibility", "Acessibilidade")}</dt>
+              <dd>{t("Real dialogs, focus, reduced motion", "Diálogos de verdade, foco, menos movimento")}</dd>
             </div>
             <div>
-              <dt>License</dt>
+              <dt>{t("License", "Licença")}</dt>
               <dd>MIT</dd>
             </div>
           </dl>
@@ -270,21 +328,21 @@ function Landing() {
 
         <section id="theming" className="stage stage--flip">
           <div className="stage__device">
-            <Phone demo="controls" titulo={`A transfer form in ${cor.nome}, ${tema} appearance`} tint={cor.valor} tema={tema} />
+            <Phone demo="controls" titulo={t("A transfer form in the chosen color", "Um formulário de transferência na cor escolhida")} tint={cor.valor} tema={tema} />
           </div>
           <div className="stage__copy">
-            <p className="stage__label">07 / Theming</p>
-            <h2 className="stage__title">Your color</h2>
-            <p className="stage__text">One CSS variable sets the accent across every component. Light and dark are built in.</p>
-            <div className="swatches" role="radiogroup" aria-label="Accent color">
+            <p className="stage__label">07 / {t("Theming", "Temas")}</p>
+            <h2 className="stage__title">{t("Your color", "Sua cor")}</h2>
+            <p className="stage__text">{t("One CSS variable sets the accent across every component. Light and dark are built in.", "Uma variável CSS define a cor de destaque em todos os componentes. Claro e escuro já vêm prontos.")}</p>
+            <div className="swatches" role="radiogroup" aria-label={t("Accent color", "Cor de destaque")}>
               {CORES.map((c) => (
-                <button key={c.valor} type="button" role="radio" aria-checked={cor.valor === c.valor} aria-label={c.nome} className="swatch" style={{ background: c.valor }} onClick={() => setCor(c)} />
+                <button key={c.valor} type="button" role="radio" aria-checked={cor.valor === c.valor} aria-label={c.nome[i]} className="swatch" style={{ background: c.valor }} onClick={() => setCor(c)} />
               ))}
             </div>
-            <div className="modes" role="radiogroup" aria-label="Appearance">
-              {(["dark", "light"] as const).map((t) => (
-                <button key={t} type="button" role="radio" aria-checked={tema === t} onClick={() => setTema(t)}>
-                  {t}
+            <div className="modes" role="radiogroup" aria-label={t("Appearance", "Aparência")}>
+              {(["dark", "light"] as const).map((m) => (
+                <button key={m} type="button" role="radio" aria-checked={tema === m} onClick={() => setTema(m)}>
+                  {m === "dark" ? t("Dark", "Escuro") : t("Light", "Claro")}
                 </button>
               ))}
             </div>
@@ -293,17 +351,17 @@ function Landing() {
         </section>
 
         <section id="start" className="launch">
-          <p className="stage__label">08 / Start building</p>
-          <h2 className="stage__title">Ready for launch</h2>
+          <p className="stage__label">08 / {t("Start building", "Comece a construir")}</p>
+          <h2 className="stage__title">{t("Ready for launch", "Pronto para lançar")}</h2>
           <pre className="launch__code">
-            <code>{CODIGO}</code>
+            <code>{i ? CODIGO_PT : CODIGO}</code>
           </pre>
           <div className="stage__actions stage__actions--center">
             <a href="#/docs/introduction" className="btn">
-              Read the docs
+              {t("Read the docs", "Ler a documentação")}
             </a>
             <a href={GITHUB} className="btn">
-              View on GitHub
+              {t("View on GitHub", "Ver no GitHub")}
             </a>
           </div>
         </section>
@@ -311,12 +369,12 @@ function Landing() {
 
       <footer className="foot">
         <span>StackUI © 2026</span>
-        <a href={AUTOR}>Created by Gustavo Pavão</a>
-        <a href="#/docs/introduction">Docs</a>
+        <a href={AUTOR}>{t("Created by Gustavo Pavão", "Criado por Gustavo Pavão")}</a>
+        <a href="#/docs/introduction">{t("Docs", "Docs")}</a>
         <a href={GITHUB}>GitHub</a>
-        <a href={`${GITHUB}/blob/main/LICENSE`}>MIT License</a>
+        <a href={`${GITHUB}/blob/main/LICENSE`}>{t("MIT License", "Licença MIT")}</a>
       </footer>
-    </>
+    </div>
   );
 }
 
@@ -338,6 +396,8 @@ function Site() {
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <Site />
+    <LangProvider>
+      <Site />
+    </LangProvider>
   </StrictMode>,
 );

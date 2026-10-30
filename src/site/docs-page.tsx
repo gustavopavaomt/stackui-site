@@ -1,8 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 
-import { DOCS, TODAS } from "./docs";
+import { docs } from "./docs";
+import { Flags, useLang, useT } from "./i18n";
+import { Marca } from "./marca";
 import { Inline, ler, Realce, type Bloco } from "./markdown";
 import { PROPS } from "./props";
+import { PROPS_PT } from "./props-pt";
 
 import "./docs.css";
 
@@ -11,6 +14,7 @@ const FONTE = "https://github.com/gustavopavaomt/stackui-site/blob/main/src/site
 const BASE = import.meta.env.BASE_URL;
 
 function Copiar({ texto }: { texto: string }) {
+  const t = useT();
   const [ok, setOk] = useState(false);
   return (
     <button
@@ -26,7 +30,7 @@ function Copiar({ texto }: { texto: string }) {
         }
       }}
     >
-      {ok ? "Copied" : "Copy"}
+      {ok ? t("Copied", "Copiado") : t("Copy", "Copiar")}
     </button>
   );
 }
@@ -49,11 +53,20 @@ function Codigo({ codigo, lang }: { codigo: string; lang: string }) {
 
 /** The live example next to its code. The example runs in its own frame, at a phone's width. */
 function Exemplo({ nome, altura, codigo }: { nome: string; altura: number; codigo: string }) {
+  const { lang } = useLang();
+  const t = useT();
   return (
     <figure className="doc-example">
       <div className="doc-example__preview">
-        <span className="doc-example__label">Live example</span>
-        <iframe src={`${BASE}demo.html?c=${nome}&theme=light`} title={`Live example: ${nome}`} loading="lazy" style={{ height: altura }} allow={nome === "barcode-scanner" ? "camera" : undefined} />
+        <span className="doc-example__label">{t("Live example", "Exemplo ao vivo")}</span>
+        <iframe
+          key={lang}
+          src={`${BASE}demo.html?c=${nome}&lang=${lang}&theme=dark`}
+          title={`${t("Live example", "Exemplo ao vivo")}: ${nome}`}
+          loading="lazy"
+          style={{ height: altura }}
+          allow={nome === "barcode-scanner" ? "camera" : undefined}
+        />
       </div>
       <Codigo codigo={codigo} lang="tsx" />
     </figure>
@@ -61,6 +74,8 @@ function Exemplo({ nome, altura, codigo }: { nome: string; altura: number; codig
 }
 
 function Props({ componente }: { componente: string }) {
+  const { lang } = useLang();
+  const t = useT();
   const lista = PROPS[componente] ?? [];
   return (
     <section className="doc-props" aria-labelledby={`props-${componente}`}>
@@ -72,17 +87,17 @@ function Props({ componente }: { componente: string }) {
           <div key={p.name} className="doc-prop">
             <dt>
               <code className="doc-prop__name">{p.name}</code>
-              {p.required && <span className="doc-prop__required">Required</span>}
+              {p.required && <span className="doc-prop__required">{t("Required", "Obrigatória")}</span>}
             </dt>
             <dd>
-              <p>{p.description}</p>
+              <p>{(lang === "pt" && PROPS_PT[componente]?.[p.name]) || p.description}</p>
               <p className="doc-prop__meta">
-                <span>Type</span>
+                <span>{t("Type", "Tipo")}</span>
                 <code>{p.type}</code>
               </p>
               {p.default && (
                 <p className="doc-prop__meta">
-                  <span>Default</span>
+                  <span>{t("Default", "Padrão")}</span>
                   <code>{p.default}</code>
                 </p>
               )}
@@ -94,20 +109,7 @@ function Props({ componente }: { componente: string }) {
   );
 }
 
-function Componentes() {
-  return (
-    <div className="doc-grid">
-      {DOCS.slice(1).flatMap((g) =>
-        g.paginas.map((p) => (
-          <a key={p.slug} href={`#/docs/${p.slug}`} className="doc-grid__item">
-            <span>{g.titulo}</span>
-            {p.titulo}
-          </a>
-        )),
-      )}
-    </div>
-  );
-}
+const CALLOUT: Record<string, string> = { tip: "tip", dica: "tip", note: "note", nota: "note", warning: "warning", atenção: "warning" };
 
 function Blocos({ blocos }: { blocos: Bloco[] }) {
   return (
@@ -137,9 +139,9 @@ function Blocos({ blocos }: { blocos: Bloco[] }) {
           case "ul":
             return (
               <ul key={i}>
-                {b.itens.map((t, j) => (
+                {b.itens.map((txt, j) => (
                   <li key={j}>
-                    <Inline texto={t} />
+                    <Inline texto={txt} />
                   </li>
                 ))}
               </ul>
@@ -148,7 +150,7 @@ function Blocos({ blocos }: { blocos: Bloco[] }) {
             return <Codigo key={i} codigo={b.codigo} lang={b.lang} />;
           case "callout":
             return (
-              <aside key={i} className={`doc-callout doc-callout--${b.rotulo.toLowerCase()}`}>
+              <aside key={i} className={`doc-callout doc-callout--${CALLOUT[b.rotulo.toLowerCase()] ?? "note"}`}>
                 <strong>{b.rotulo}</strong>
                 <p>
                   <Inline texto={b.texto} />
@@ -160,7 +162,7 @@ function Blocos({ blocos }: { blocos: Bloco[] }) {
           case "props":
             return <Props key={i} componente={b.componente} />;
           case "components":
-            return <Componentes key={i} />;
+            return null;
         }
       })}
     </>
@@ -168,52 +170,65 @@ function Blocos({ blocos }: { blocos: Bloco[] }) {
 }
 
 export function DocsPage({ slug }: { slug: string }) {
-  const indice = Math.max(0, TODAS.findIndex((p) => p.slug === slug));
-  const pagina = TODAS[indice];
+  const { lang } = useLang();
+  const t = useT();
+  const grupos = useMemo(() => docs(lang), [lang]);
+  const todas = useMemo(() => grupos.flatMap((g) => g.paginas), [grupos]);
+  const indice = Math.max(0, todas.findIndex((p) => p.slug === slug));
+  const pagina = todas[indice];
   const blocos = useMemo(() => ler(pagina.md), [pagina]);
   const titulo = blocos.find((b) => b.tipo === "h1");
   const lead = blocos.findIndex((b) => b.tipo === "p");
   const secoes = blocos.filter((b): b is { tipo: "h2"; texto: string; id: string } => b.tipo === "h2");
-  const anterior = TODAS[indice - 1];
-  const proxima = TODAS[indice + 1];
+  const anterior = todas[indice - 1];
+  const proxima = todas[indice + 1];
+  const basico = grupos[0].paginas.some((p) => p.slug === pagina.slug);
   const [busca, setBusca] = useState("");
   const [menu, setMenu] = useState(false);
 
   useEffect(() => {
     document.title = `${pagina.titulo} · StackUI`;
+  }, [pagina]);
+  useEffect(() => {
     window.scrollTo(0, 0);
     setMenu(false);
-  }, [pagina]);
+  }, [slug]);
 
-  const grupos = DOCS.map((g) => ({ ...g, paginas: g.paginas.filter((p) => p.titulo.toLowerCase().includes(busca.trim().toLowerCase())) })).filter((g) => g.paginas.length);
+  const filtrados = grupos.map((g) => ({ ...g, paginas: g.paginas.filter((p) => p.titulo.toLowerCase().includes(busca.trim().toLowerCase())) })).filter((g) => g.paginas.length);
 
   return (
     <div className="docs">
       <header className="docs-top">
-        <div className="docs-top__inner">
-          <a href="#top" className="docs-top__brand">
-            <img src={`${BASE}favicon.svg`} alt="" width={24} height={24} />
-            StackUI
+        <a href="#top" className="docs-top__brand">
+          <Marca />
+          STACKUI
+        </a>
+        <nav className="docs-top__nav" aria-label={t("Site", "Site")}>
+          <a href="#/docs/introduction" aria-current={basico ? "page" : undefined}>
+            {t("Guides", "Guias")}
           </a>
-          <nav className="docs-top__nav" aria-label="Site">
-            <a href="#/docs/introduction" aria-current={DOCS[0].paginas.some((p) => p.slug === pagina.slug) ? "page" : undefined}>
-              Guides
-            </a>
-            <a href="#/docs/text-and-stacks" aria-current={!DOCS[0].paginas.some((p) => p.slug === pagina.slug) ? "page" : undefined}>
-              Components
-            </a>
-            <a href={GITHUB}>GitHub</a>
-          </nav>
-          <button type="button" className="docs-top__menu" aria-expanded={menu} onClick={() => setMenu(!menu)}>
-            {menu ? "Close" : "Menu"}
-          </button>
-        </div>
+          <a href="#/docs/text-and-stacks" aria-current={!basico ? "page" : undefined}>
+            {t("Components", "Componentes")}
+          </a>
+          <a href={GITHUB}>GitHub</a>
+        </nav>
+        <button type="button" className="docs-top__menu" aria-expanded={menu} onClick={() => setMenu(!menu)}>
+          {menu ? t("Close", "Fechar") : "Menu"}
+        </button>
+        <Flags />
       </header>
 
       <div className="docs-body">
-        <aside className={`docs-side${menu ? " docs-side--open" : ""}`} aria-label="Docs">
-          <input className="docs-side__search" type="search" placeholder="Search the docs" value={busca} onChange={(e) => setBusca(e.target.value)} aria-label="Search the docs" />
-          {grupos.map((g) => (
+        <aside className={`docs-side${menu ? " docs-side--open" : ""}`} aria-label={t("Docs", "Docs")}>
+          <input
+            className="docs-side__search"
+            type="search"
+            placeholder={t("Search the docs", "Buscar na documentação")}
+            value={busca}
+            onChange={(e) => setBusca(e.target.value)}
+            aria-label={t("Search the docs", "Buscar na documentação")}
+          />
+          {filtrados.map((g) => (
             <div key={g.titulo} className="docs-side__group">
               <p className="docs-side__title">{g.titulo}</p>
               <ul>
@@ -231,6 +246,7 @@ export function DocsPage({ slug }: { slug: string }) {
 
         <main className="docs-main">
           <article className="doc">
+            <p className="doc__kicker">{basico ? t("The Basics", "O básico") : t("Components", "Componentes")}</p>
             <h1>{titulo && "texto" in titulo ? titulo.texto : pagina.titulo}</h1>
             {lead >= 0 && "texto" in blocos[lead] && (
               <p className="doc__lead">
@@ -240,12 +256,12 @@ export function DocsPage({ slug }: { slug: string }) {
             <Blocos blocos={blocos.filter((_, i) => i !== lead)} />
           </article>
           <div className="doc-foot">
-            <a href={`${FONTE}/${pagina.slug}.md`}>Edit this page on GitHub</a>
+            <a href={`${FONTE}/${lang}/${pagina.slug}.md`}>{t("Edit this page on GitHub", "Editar esta página no GitHub")}</a>
           </div>
-          <nav className="doc-pager" aria-label="Pages">
+          <nav className="doc-pager" aria-label={t("Pages", "Páginas")}>
             {anterior ? (
               <a href={`#/docs/${anterior.slug}`} className="doc-pager__link">
-                <span>Previous</span>
+                <span>{t("Previous", "Anterior")}</span>
                 {anterior.titulo}
               </a>
             ) : (
@@ -253,17 +269,17 @@ export function DocsPage({ slug }: { slug: string }) {
             )}
             {proxima && (
               <a href={`#/docs/${proxima.slug}`} className="doc-pager__link doc-pager__link--next">
-                <span>Next</span>
+                <span>{t("Next", "Próxima")}</span>
                 {proxima.titulo}
               </a>
             )}
           </nav>
         </main>
 
-        <nav className="docs-toc" aria-label="On this page">
+        <nav className="docs-toc" aria-label={t("On this page", "Nesta página")}>
           {secoes.length > 0 && (
             <>
-              <p>On this page</p>
+              <p>{t("On this page", "Nesta página")}</p>
               <ul>
                 {secoes.map((s) => (
                   <li key={s.id}>
@@ -279,10 +295,10 @@ export function DocsPage({ slug }: { slug: string }) {
       </div>
 
       <footer className="docs-footer">
-        <p>
-          StackUI is free and open source under the MIT license. Designed and built by{" "}
-          <a href="https://github.com/gustavopavaomt">Gustavo Pavão</a>.
-        </p>
+        <span>StackUI © 2026</span>
+        <a href="https://github.com/gustavopavaomt">{t("Created by Gustavo Pavão", "Criado por Gustavo Pavão")}</a>
+        <a href={GITHUB}>GitHub</a>
+        <a href={`${GITHUB}/blob/main/LICENSE`}>{t("MIT License", "Licença MIT")}</a>
       </footer>
     </div>
   );

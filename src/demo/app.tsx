@@ -32,6 +32,7 @@ import {
 } from "@stackui/react";
 
 import { CATEGORIAS, dataCurta, dataLonga, gerarLancamentos, hojeIso, moeda, type Categoria, type Lancamento } from "./data";
+import { L, LOCALE, PT } from "./lang";
 import { CARTAO, CASA, ENGRENAGEM, FILTRO, ICONES_CATEGORIA, LAPIS, LISTA, LIXO, MAIS, MOEDA, RETICENCIAS, ROSTO, SINO } from "./icons";
 
 /** A tiny hash router: the library works with any router. */
@@ -59,6 +60,8 @@ const Ctx = createContext<Loja | null>(null);
 const useLoja = () => useContext(Ctx)!;
 
 let proximoId = 100000;
+
+const LISTA_PT = { searchPlaceholder: "Buscar", emptyText: "Nada com esse nome", countText: (n: number, t: number) => (n === t ? `${t} itens` : `${n} de ${t}`) };
 
 function ProvedorLoja({ children }: { children: ReactNode }) {
   const [lancamentos, setLancamentos] = useState(gerarLancamentos);
@@ -117,8 +120,8 @@ function Formulario({ alvo, onFechar }: { alvo: Lancamento | "expense" | "income
   }
 
   const numero = Number(valor.replace(",", "."));
-  const erroValor = tentou && !(numero > 0) ? "Type an amount" : undefined;
-  const erroTitulo = tentou && !titulo.trim() ? "Type a description" : undefined;
+  const erroValor = tentou && !(numero > 0) ? L("Type an amount", "Digite um valor") : undefined;
+  const erroTitulo = tentou && !titulo.trim() ? L("Type a description", "Digite uma descrição") : undefined;
 
   const gravar = () => {
     setTentou(true);
@@ -130,25 +133,28 @@ function Formulario({ alvo, onFechar }: { alvo: Lancamento | "expense" | "income
     }, 600);
     window.setTimeout(() => {
       onFechar();
-      show(existente ? "Changes saved" : tipo === "expense" ? "Expense added" : "Income added");
+      show(existente ? L("Changes saved", "Alterações salvas") : tipo === "expense" ? L("Expense added", "Despesa lançada") : L("Income added", "Receita lançada"));
     }, 1300);
   };
 
   const opcoesCategoria = (tipo === "expense" ? CATEGORIAS_GASTO : CATEGORIAS_ENTRADA).map((c) => ({ value: c, label: CATEGORIAS[c].nome, icon: ICONES_CATEGORIA[c] }));
-  const titulos = { expense: "New expense", income: "New income" };
+  const titulos = { expense: L("New expense", "Nova despesa"), income: L("New income", "Nova receita") };
 
   return (
     <Sheet
       isPresented={!!alvo}
       onDismiss={onFechar}
-      title={tela === "category" ? "Category" : existente ? "Edit transaction" : titulos[tipo]}
+      title={tela === "category" ? L("Category", "Categoria") : existente ? L("Edit transaction", "Editar lançamento") : titulos[tipo]}
+      closeLabel={L("Close", "Fechar")}
+      backLabel={L("Back", "Voltar")}
       onBack={tela === "category" ? () => setTela("form") : undefined}
       interactiveDismissDisabled={estado !== "idle"}
     >
       {tela === "category" ? (
         <ListPicker
-          label="Category"
+          label={L("Category", "Categoria")}
           options={opcoesCategoria}
+          {...(PT ? LISTA_PT : {})}
           selection={categoria}
           onChange={(c) => {
             setCategoria(c);
@@ -163,21 +169,21 @@ function Formulario({ alvo, onFechar }: { alvo: Lancamento | "expense" | "income
               setTipo(t);
               setCategoria(t === "expense" ? "groceries" : "salary");
             }}
-            label="Type"
+            label={L("Type", "Tipo")}
             options={[
-              { value: "expense", label: "Expense" },
-              { value: "income", label: "Income" },
+              { value: "expense", label: L("Expense", "Despesa") },
+              { value: "income", label: L("Income", "Receita") },
             ]}
           />
           <Section>
-            <TextField label="Amount" inputMode="decimal" value={valor} onChange={(e) => setValor(e.target.value)} error={erroValor} accessory={<Text color="secondary">USD</Text>} />
-            <TextField label="Description" value={titulo} onChange={(e) => setTitulo(e.target.value)} error={erroTitulo} />
-            <PickerRow label="Category" value={CATEGORIAS[categoria].nome} onClick={() => setTela("category")} />
-            <Row title="Date" accessory={<DatePicker value={data} onChange={setData} max={hojeIso()} locale="en-US" />} />
-            <TextEditor label="Note" rows={2} value={nota} onChange={(e) => setNota(e.target.value)} />
+            <TextField label={L("Amount", "Valor")} inputMode="decimal" value={valor} onChange={(e) => setValor(e.target.value)} error={erroValor} accessory={<Text color="secondary">{PT ? "BRL" : "USD"}</Text>} />
+            <TextField label={L("Description", "Descrição")} value={titulo} onChange={(e) => setTitulo(e.target.value)} error={erroTitulo} />
+            <PickerRow label={L("Category", "Categoria")} value={CATEGORIAS[categoria].nome} onClick={() => setTela("category")} />
+            <Row title={L("Date", "Data")} accessory={<DatePicker value={data} onChange={setData} max={hojeIso()} locale={LOCALE} {...(PT ? { title: "Data", placeholder: "Escolher", shortcuts: [{ label: "Hoje", value: hojeIso() }] } : {})} />} />
+            <TextEditor label={L("Note", "Observação")} rows={2} value={nota} onChange={(e) => setNota(e.target.value)} />
           </Section>
-          <Button size="large" state={estado} onClick={gravar} loadingLabel="Saving…" doneLabel="Saved">
-            Save
+          <Button size="large" state={estado} onClick={gravar} loadingLabel={L("Saving…", "Salvando…")} doneLabel={L("Saved", "Salvo")}>
+            {L("Save", "Salvar")}
           </Button>
         </List>
       )}
@@ -201,7 +207,7 @@ function LinhaLancamento({ l }: { l: Lancamento }) {
   );
 }
 
-const menuNovo = (editar: Loja["editar"]) => <Menu label="Add" icon={MAIS} prominent items={[{ label: "New expense", icon: MOEDA, onPress: () => editar("expense") }, { label: "New income", icon: CARTAO, onPress: () => editar("income") }]} />;
+const menuNovo = (editar: Loja["editar"]) => <Menu label={L("Add", "Adicionar")} icon={MAIS} prominent items={[{ label: L("New expense", "Nova despesa"), icon: MOEDA, onPress: () => editar("expense") }, { label: L("New income", "Nova receita"), icon: CARTAO, onPress: () => editar("income") }]} />;
 
 function Inicio() {
   const { lancamentos, editar } = useLoja();
@@ -222,7 +228,7 @@ function Inicio() {
       <List>
         <Card>
           <Text font="subheadline" color="secondary">
-            Total balance
+            {L("Total balance", "Saldo total")}
           </Text>
           <Text font="largeTitle" as="p" style={{ marginTop: 2 }}>
             {moeda(saldo)}
@@ -230,7 +236,7 @@ function Inicio() {
           <HStack alignment="leading" style={{ marginTop: 16, paddingTop: 14, borderTop: "0.5px solid var(--st-separator)" }}>
             <VStack spacing={2} alignment="leading" style={{ flex: 1 }}>
               <Text font="footnote" color="secondary">
-                Income this month
+                {L("Income this month", "Entrou no mês")}
               </Text>
               <Text font="headline" style={{ color: "var(--st-success)" }}>
                 {moeda(entrou, true)}
@@ -238,13 +244,13 @@ function Inicio() {
             </VStack>
             <VStack spacing={2} alignment="leading" style={{ flex: 1 }}>
               <Text font="footnote" color="secondary">
-                Spent this month
+                {L("Spent this month", "Saiu no mês")}
               </Text>
               <Text font="headline">{moeda(-saiu)}</Text>
             </VStack>
           </HStack>
         </Card>
-        <Section header="Recent" headerAccessory={<a href="#/activity" style={{ color: "var(--st-tint)", fontSize: 15, textDecoration: "none" }}>See all</a>}>
+        <Section header={L("Recent", "Recentes")} headerAccessory={<a href="#/activity" style={{ color: "var(--st-tint)", fontSize: 15, textDecoration: "none" }}>{L("See all", "Ver tudo")}</a>}>
           {lancamentos.slice(0, 6).map((l) => (
             <LinhaLancamento key={l.id} l={l} />
           ))}
@@ -266,30 +272,30 @@ function Atividade() {
   return (
     <>
       <NavigationBar
-        title="Activity"
+        title={L("Activity", "Atividade")}
         trailing={
           <>
-            <ToolbarButton label="Filter" icon={FILTRO} dot={filtro !== "all"} onClick={() => setFiltrando(true)} />
+            <ToolbarButton label={L("Filter", "Filtrar")} icon={FILTRO} dot={filtro !== "all"} onClick={() => setFiltrando(true)} />
             {menuNovo(editar)}
           </>
         }
       />
-      <SearchField sticky value={busca} onChange={setBusca} label="Search transactions" />
+      <SearchField sticky value={busca} onChange={setBusca} label={L("Search transactions", "Buscar lançamentos")} placeholder={L("Search", "Buscar")} clearLabel={L("Clear search", "Limpar busca")} />
       <List>
-        <Section header={`${visiveis.length.toLocaleString("en-US")} transactions`} plain>
+        <Section header={`${visiveis.length.toLocaleString(LOCALE)} ${L("transactions", "lançamentos")}`} plain>
           <LazyList items={visiveis} id={(l) => l.id} estimatedRowHeight={64} render={(l) => <LinhaLancamento l={l} />} />
         </Section>
       </List>
       <OptionsSheet
         isPresented={filtrando}
         onDismiss={() => setFiltrando(false)}
-        title="Show"
+        title={L("Show", "Mostrar")}
         selection={filtro}
         onChange={setFiltro}
         options={[
-          { value: "all", label: "All transactions" },
-          { value: "expense", label: "Expenses" },
-          { value: "income", label: "Income" },
+          { value: "all", label: L("All transactions", "Todos os lançamentos") },
+          { value: "expense", label: L("Expenses", "Despesas") },
+          { value: "income", label: L("Income", "Receitas") },
         ]}
       />
     </>
@@ -304,13 +310,13 @@ function Detalhe({ id }: { id: string }) {
   if (!l)
     return (
       <>
-        <NavigationBar title="Transaction" backHref="#/activity" />
+        <NavigationBar title={L("Transaction", "Lançamento")} backHref="#/activity" backLabel={L("Back", "Voltar")} />
       </>
     );
   const confirmarApagar = () => {
     location.hash = "#/activity";
     window.setTimeout(() => apagar(l.id), 350);
-    show("Transaction deleted");
+    show(L("Transaction deleted", "Lançamento apagado"));
   };
   return (
     <>
@@ -318,7 +324,8 @@ function Detalhe({ id }: { id: string }) {
         title={l.titulo}
         displayMode="inline"
         backHref="#/activity"
-        trailing={<Menu label="More" icon={RETICENCIAS} items={[{ label: "Edit", icon: LAPIS, onPress: () => editar(l) }, { label: "Delete", icon: LIXO, destructive: true, onPress: () => setApagando(true) }]} />}
+        backLabel={L("Back", "Voltar")}
+        trailing={<Menu label={L("More", "Mais")} icon={RETICENCIAS} items={[{ label: L("Edit", "Editar"), icon: LAPIS, onPress: () => editar(l) }, { label: L("Delete", "Apagar"), icon: LIXO, destructive: true, onPress: () => setApagando(true) }]} />}
       />
       <List>
         <VStack spacing={4} style={{ padding: "8px 0 4px", textAlign: "center", alignItems: "center" }}>
@@ -328,17 +335,17 @@ function Detalhe({ id }: { id: string }) {
           <Text color="secondary">{l.titulo}</Text>
         </VStack>
         <Section>
-          <Row icon={ICONES_CATEGORIA[l.categoria]} iconColor={CATEGORIAS[l.categoria].cor} title="Category" value={CATEGORIAS[l.categoria].nome} />
-          <Row title="Date" value={dataLonga(l.data)} />
-          <Row title="Account" value="Everyday ·· 4821" />
-          {l.nota && <Row title="Note" subtitle={l.nota} />}
+          <Row icon={ICONES_CATEGORIA[l.categoria]} iconColor={CATEGORIAS[l.categoria].cor} title={L("Category", "Categoria")} value={CATEGORIAS[l.categoria].nome} />
+          <Row title={L("Date", "Data")} value={dataLonga(l.data)} />
+          <Row title={L("Account", "Conta")} value={L("Everyday ·· 4821", "Corrente ·· 4821")} />
+          {l.nota && <Row title={L("Note", "Observação")} subtitle={l.nota} />}
         </Section>
         <Section>
-          <Row title="Edit" centered onClick={() => editar(l)} />
-          <Row title="Delete transaction" centered destructive onClick={() => setApagando(true)} />
+          <Row title={L("Edit", "Editar")} centered onClick={() => editar(l)} />
+          <Row title={L("Delete transaction", "Apagar lançamento")} centered destructive onClick={() => setApagando(true)} />
         </Section>
       </List>
-      <Alert isPresented={apagando} onDismiss={() => setApagando(false)} title="Delete this transaction?" message="It is removed from your history and your balance." actions={[{ label: "Cancel", role: "cancel" }, { label: "Delete", role: "destructive", onPress: confirmarApagar }]} />
+      <Alert isPresented={apagando} onDismiss={() => setApagando(false)} title={L("Delete this transaction?", "Apagar este lançamento?")} message={L("It is removed from your history and your balance.", "Ele sai do histórico e do saldo.")} actions={[{ label: L("Cancel", "Cancelar"), role: "cancel" }, { label: L("Delete", "Apagar"), role: "destructive", onPress: confirmarApagar }]} />
     </>
   );
 }
@@ -348,15 +355,15 @@ export function Ajustes({ voltar }: { voltar?: string }) {
   const [avisos, setAvisos] = useState(true);
   return (
     <>
-      <NavigationBar title="Settings" />
+      <NavigationBar title={L("Settings", "Ajustes")} />
       <List>
-        <Section header="Security">
+        <Section header={L("Security", "Segurança")}>
           <Row icon={ROSTO} iconColor="var(--st-green)" title="Face ID" accessory={<Toggle isOn={faceId} onChange={setFaceId} label="Face ID" />} />
-          <Row icon={SINO} iconColor="var(--st-red)" title="Notifications" accessory={<Toggle isOn={avisos} onChange={setAvisos} label="Notifications" />} />
+          <Row icon={SINO} iconColor="var(--st-red)" title={L("Notifications", "Notificações")} accessory={<Toggle isOn={avisos} onChange={setAvisos} label={L("Notifications", "Notificações")} />} />
         </Section>
-        <Section header="Accounts" footer="Balances refresh every time you open the app.">
-          <Row icon={CARTAO} iconColor="var(--st-blue)" title="Everyday" subtitle="Checking ·· 4821" value="$12,480" href={`#${voltar ?? "/settings"}/everyday`} />
-          <Row icon={MOEDA} iconColor="var(--st-indigo)" title="Savings" subtitle="High yield ·· 0937" value="$31,200" href={`#${voltar ?? "/settings"}/savings`} />
+        <Section header={L("Accounts", "Contas")} footer={L("Balances refresh every time you open the app.", "Os saldos atualizam toda vez que você abre o app.")}>
+          <Row icon={CARTAO} iconColor="var(--st-blue)" title={L("Everyday", "Corrente")} subtitle={L("Checking ·· 4821", "Conta corrente ·· 4821")} value={L("$12,480", "R$ 12.480")} href={`#${voltar ?? "/settings"}/everyday`} />
+          <Row icon={MOEDA} iconColor="var(--st-indigo)" title={L("Savings", "Poupança")} subtitle={L("High yield ·· 0937", "Rendimento ·· 0937")} value={L("$31,200", "R$ 31.200")} href={`#${voltar ?? "/settings"}/savings`} />
         </Section>
       </List>
     </>
@@ -366,15 +373,15 @@ export function Ajustes({ voltar }: { voltar?: string }) {
 export function Conta({ nome, voltar }: { nome: string; voltar: string }) {
   return (
     <>
-      <NavigationBar title={nome === "savings" ? "Savings" : "Everyday"} backHref={`#${voltar}`} />
+      <NavigationBar title={nome === "savings" ? L("Savings", "Poupança") : L("Everyday", "Corrente")} backHref={`#${voltar}`} backLabel={L("Back", "Voltar")} />
       <List>
-        <Section header="Details">
-          <Row title="Account number" value={nome === "savings" ? "·· 0937" : "·· 4821"} />
-          <Row title="Interest" value={nome === "savings" ? "4.1% APY" : "0.1% APY"} />
-          <Row title="Statements" href={`#${voltar}/${nome}`} />
+        <Section header={L("Details", "Detalhes")}>
+          <Row title={L("Account number", "Número da conta")} value={nome === "savings" ? "·· 0937" : "·· 4821"} />
+          <Row title={L("Interest", "Rendimento")} value={nome === "savings" ? L("4.1% APY", "100% do CDI") : L("0.1% APY", "0,1% a.a.")} />
+          <Row title={L("Statements", "Extratos")} href={`#${voltar}/${nome}`} />
         </Section>
-        <Section header="Cards">
-          <Row icon={CARTAO} iconColor="var(--st-gray)" title="Debit card" subtitle="Expires 08/29" />
+        <Section header={L("Cards", "Cartões")}>
+          <Row icon={CARTAO} iconColor="var(--st-gray)" title={L("Debit card", "Cartão de débito")} subtitle={L("Expires 08/29", "Vence em 08/29")} />
         </Section>
       </List>
     </>
@@ -382,9 +389,9 @@ export function Conta({ nome, voltar }: { nome: string; voltar: string }) {
 }
 
 const ABAS = [
-  { id: "home", label: "Home", icon: CASA, href: "#/home" },
-  { id: "activity", label: "Activity", icon: LISTA, href: "#/activity" },
-  { id: "settings", label: "Settings", icon: ENGRENAGEM, href: "#/settings" },
+  { id: "home", label: L("Home", "Início"), icon: CASA, href: "#/home" },
+  { id: "activity", label: L("Activity", "Atividade"), icon: LISTA, href: "#/activity" },
+  { id: "settings", label: L("Settings", "Ajustes"), icon: ENGRENAGEM, href: "#/settings" },
 ];
 
 function tela(caminho: string) {
@@ -401,7 +408,7 @@ export function DemoApp() {
   return (
     <ProvedorLoja>
       <NavigationStack location={caminho} render={(l) => <div style={{ paddingBottom: 112 }}>{tela(l)}</div>} />
-      <TabBar items={ABAS} selection={aba} hidden={caminho.split("/").filter(Boolean).length > 1} />
+      <TabBar items={ABAS} label={L("Main", "Principal")} selection={aba} hidden={caminho.split("/").filter(Boolean).length > 1} />
     </ProvedorLoja>
   );
 }
