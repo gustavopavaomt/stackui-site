@@ -106,15 +106,10 @@
 }
 
 /* ---- Callouts ---- */
-.doc-callout { margin: 22px 0 0; padding: 16px 20px; border-left: 2px solid #fff; background: var(--d-panel); }
-.doc-callout strong { display: block; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; }
-.doc-callout p { margin: 6px 0 0; }
-.doc-callout--tip { border-left-color: #30d158; }
-.doc-callout--tip strong { color: #30d158; }
-.doc-callout--note { border-left-color: #64b5ff; }
-.doc-callout--note strong { color: #64b5ff; }
-.doc-callout--warning { border-left-color: #ff9f0a; }
-.doc-callout--warning strong { color: #ff9f0a; }
+/* A quiet box in the site's language: a thin frame and the label in small caps, no color. */
+.doc-callout { margin: 24px 0 0; padding: 18px 22px; border: 1px solid var(--d-line); }
+.doc-callout strong { display: block; color: var(--d-ink-3); font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; }
+.doc .doc-callout p { margin: 8px 0 0; color: var(--d-ink-2); }
 
 /* ---- Props ---- */
 .doc-props { margin: 28px 0 0; }
