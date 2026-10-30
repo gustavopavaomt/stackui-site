@@ -5,8 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="robots" content="noindex" />
     <title>StackUI demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&display=swap" />
     <style>
       body { margin: 0; }
+      /* SF Pro on Apple devices; Inter elsewhere (the library's own stack has no web font). */
+      :root { --st-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", system-ui, sans-serif; }
       /* The phone frame scrolls inside; no scrollbar, like a phone. */
       html { scrollbar-width: none; }
       html::-webkit-scrollbar { display: none; }

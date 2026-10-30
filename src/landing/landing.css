@@ -13,8 +13,8 @@
   --night: #0c0b17;
   --blue: var(--brand);
   --link: var(--brand-ink);
-  --display: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Inter", system-ui, sans-serif;
-  --text: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Inter", system-ui, sans-serif;
+  --display: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif;
+  --text: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif;
   --mono: "SF Mono", ui-monospace, "JetBrains Mono", Menlo, "Cascadia Code", Consolas, monospace;
   color-scheme: light;
 }
