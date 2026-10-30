@@ -2,21 +2,23 @@ import { useState } from "react";
 
 import {
   Alert,
-  Badge,
+  Avatar,
   Button,
+  Card,
   ConfirmationSheet,
   DatePicker,
   HStack,
   List,
   ListPicker,
   NavigationBar,
-  OptionsSheet,
   Picker,
   PickerRow,
   Row,
   Section,
   Sheet,
+  Spacer,
   Stepper,
+  Text,
   TextField,
   TimePicker,
   Toggle,
@@ -25,120 +27,227 @@ import {
   type ButtonState,
 } from "@stackui/react";
 
-import { CATEGORIAS, type Categoria } from "./data";
-import { COMPARTILHAR, COPIAR, DOCUMENTO, ICONES_CATEGORIA } from "./icons";
+import { CARTAO, COMPARTILHAR, COPIAR, DOCUMENTO, ESCUDO } from "./icons";
 
+/*
+ * Screens of the Wallet example app, each one showing off a part of the library in a real context:
+ * the card (sheets and alerts), a new transfer (controls), splitting a bill (toasts), scheduling a payment (pickers).
+ */
+
+/** The card, drawn with the accent color. */
+function CartaoVisual({ congelado }: { congelado: boolean }) {
+  return (
+    <div
+      style={{
+        position: "relative",
+        aspectRatio: "1.586",
+        padding: 20,
+        borderRadius: 18,
+        color: "#fff",
+        background: congelado ? "linear-gradient(135deg, #8e8e93, #636366)" : "linear-gradient(135deg, var(--st-tint), color-mix(in oklab, var(--st-tint) 55%, #000))",
+        boxShadow: "0 12px 30px -12px rgb(0 0 0 / 0.45)",
+        transition: "background 0.4s ease",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <HStack>
+        <Text font="headline" style={{ color: "#fff" }}>
+          Wallet
+        </Text>
+        <Spacer />
+        <Text font="footnote" style={{ color: "rgb(255 255 255 / 0.85)" }}>
+          {congelado ? "Frozen" : "Debit"}
+        </Text>
+      </HStack>
+      <Spacer />
+      <Text font="title3" style={{ color: "#fff", letterSpacing: "0.12em", fontVariantNumeric: "tabular-nums" }}>
+        •••• 4821
+      </Text>
+      <Text font="footnote" style={{ color: "rgb(255 255 255 / 0.85)", marginTop: 4 }}>
+        Ana Souza · 08/29
+      </Text>
+    </div>
+  );
+}
+
+/** Sheets and alerts: the card screen. */
 export function DemoSheets() {
-  const [aberta, setAberta] = useState<"" | "share" | "confirm" | "options" | "alert">("");
+  const [aberta, setAberta] = useState<"" | "details" | "replace" | "lost">("");
+  const [congelado, setCongelado] = useState(false);
   const [estado, setEstado] = useState<ButtonState>("idle");
-  const [ordem, setOrdem] = useState<"date" | "amount" | "name">("date");
   const { show } = useToast();
   const fechar = () => setAberta("");
-  const transferir = () => {
+  const pedir = () => {
     setEstado("loading");
     window.setTimeout(() => setEstado("done"), 1000);
     window.setTimeout(() => {
       fechar();
       setEstado("idle");
-      show("$250.00 sent to Ana");
+      show("New card on its way");
     }, 1900);
   };
   return (
     <>
-      <NavigationBar title="Sheets" />
+      <NavigationBar title="Card" />
       <List>
-        <Section header="Drag the handle down to close" footer="Esc, a tap outside and the Android back gesture close them too.">
-          <Row title="Share statement" onClick={() => setAberta("share")} chevron />
-          <Row title="Send $250 to Ana" onClick={() => setAberta("confirm")} chevron />
-          <Row title="Sort by" value={{ date: "Date", amount: "Amount", name: "Name" }[ordem]} onClick={() => setAberta("options")} chevron />
-          <Row title="Remove card" destructive onClick={() => setAberta("alert")} />
+        <CartaoVisual congelado={congelado} />
+        <Section>
+          <Row icon={CARTAO} iconColor="var(--st-blue)" title="Card details" onClick={() => setAberta("details")} chevron />
+          <Row icon={ESCUDO} iconColor="var(--st-indigo)" title="Freeze card" accessory={<Toggle isOn={congelado} onChange={setCongelado} label="Freeze card" />} />
+          <Row icon={DOCUMENTO} iconColor="var(--st-orange)" title="Replace card" onClick={() => setAberta("replace")} chevron />
+        </Section>
+        <Section>
+          <Row title="Report lost or stolen" centered destructive onClick={() => setAberta("lost")} />
         </Section>
       </List>
-      <Sheet isPresented={aberta === "share"} onDismiss={fechar} title="Share" icon={COMPARTILHAR} description="October statement, PDF, 2 pages.">
+
+      <Sheet isPresented={aberta === "details"} onDismiss={fechar} title="Card details" description="Only you can see these numbers.">
         <List>
           <Section>
-            <Row icon={COPIAR} iconColor="var(--st-gray)" title="Copy link" onClick={fechar} />
-            <Row icon={DOCUMENTO} iconColor="var(--st-blue)" title="Save to Files" onClick={fechar} />
+            <Row title="Number" value="4532 0151 2298 4821" />
+            <Row title="Expires" value="08/29" />
+            <Row title="CVC" value="•••" />
+          </Section>
+          <Section>
+            <Row
+              icon={COPIAR}
+              iconColor="var(--st-gray)"
+              title="Copy number"
+              onClick={() => {
+                fechar();
+                show("Number copied");
+              }}
+            />
+            <Row icon={COMPARTILHAR} iconColor="var(--st-blue)" title="Add to Wallet app" onClick={fechar} />
           </Section>
         </List>
       </Sheet>
       <ConfirmationSheet
-        isPresented={aberta === "confirm"}
+        isPresented={aberta === "replace"}
         onDismiss={fechar}
-        onConfirm={transferir}
+        onConfirm={pedir}
         state={estado}
-        title="Send money"
-        description="Check the details before sending."
+        title="Replace card"
+        description="Your current card keeps working until the new one arrives."
         items={[
-          { label: "To", value: "Ana Souza" },
-          { label: "From", value: "Everyday ·· 4821" },
-          { label: "Amount", value: "$250.00" },
+          { label: "Deliver to", value: "12 Ocean Ave" },
+          { label: "Arrives", value: "In 3–5 days" },
+          { label: "Fee", value: "Free" },
         ]}
-        confirmLabel="Send"
-        loadingLabel="Sending…"
-        doneLabel="Sent"
+        confirmLabel="Order new card"
+        loadingLabel="Ordering…"
+        doneLabel="Ordered"
       />
-      <OptionsSheet
-        isPresented={aberta === "options"}
+      <Alert
+        isPresented={aberta === "lost"}
         onDismiss={fechar}
-        title="Sort by"
-        selection={ordem}
-        onChange={setOrdem}
-        options={[
-          { value: "date", label: "Date", description: "Newest first" },
-          { value: "amount", label: "Amount", description: "Largest first" },
-          { value: "name", label: "Name" },
+        title="Block this card?"
+        message="It stops working right away. We will send you a new one."
+        actions={[
+          { label: "Cancel", role: "cancel" },
+          {
+            label: "Block",
+            role: "destructive",
+            onPress: () => {
+              setCongelado(true);
+              show("Card blocked", "error");
+            },
+          },
         ]}
       />
-      <Alert isPresented={aberta === "alert"} onDismiss={fechar} title="Remove this card?" message="You can add it again at any time." actions={[{ label: "Cancel", role: "cancel" }, { label: "Remove", role: "destructive" }]} />
     </>
   );
 }
 
+/** Controls: a new transfer form. */
 export function DemoControls() {
-  const [faceId, setFaceId] = useState(true);
-  const [tipo, setTipo] = useState<"expense" | "income">("expense");
-  const [parcelas, setParcelas] = useState(3);
-  const [valor, setValor] = useState("");
+  const [frequencia, setFrequencia] = useState<"once" | "monthly">("once");
+  const [valor, setValor] = useState("250");
+  const [meses, setMeses] = useState(6);
+  const [avisar, setAvisar] = useState(true);
   const [estado, setEstado] = useState<ButtonState>("idle");
-  const salvar = () => {
+  const numero = Number(valor.replace(",", "."));
+  const enviar = () => {
+    if (!(numero > 0)) return;
     setEstado("loading");
-    window.setTimeout(() => setEstado("done"), 900);
+    window.setTimeout(() => setEstado("done"), 1000);
     window.setTimeout(() => setEstado("idle"), 2600);
   };
   return (
     <>
-      <NavigationBar title="Controls" />
+      <NavigationBar title="New transfer" />
       <List>
+        <Section header="To">
+          <Row leading={<Avatar name="Ana Souza" />} title="Ana Souza" subtitle="Everyday ·· 3310" chevron onClick={() => undefined} />
+        </Section>
         <Picker
-          selection={tipo}
-          onChange={setTipo}
-          label="Type"
+          label="Frequency"
+          selection={frequencia}
+          onChange={setFrequencia}
           options={[
-            { value: "expense", label: "Expense" },
-            { value: "income", label: "Income" },
+            { value: "once", label: "Once" },
+            { value: "monthly", label: "Monthly" },
           ]}
         />
-        <Section>
-          <TextField label="Amount" inputMode="decimal" value={valor} onChange={(e) => setValor(e.target.value)} error={valor && !(Number(valor.replace(",", ".")) > 0) ? "Type a number" : undefined} />
-          <Row title="Installments" accessory={<Stepper value={parcelas} onChange={setParcelas} label="Installments" min={1} max={12} />} />
-          <Row title="Face ID to confirm" accessory={<Toggle isOn={faceId} onChange={setFaceId} label="Face ID to confirm" />} />
+        <Section footer={frequencia === "monthly" ? `${meses} payments of $${(numero || 0).toFixed(2)}, starting today.` : "Arrives in seconds."}>
+          <TextField label="Amount" inputMode="decimal" value={valor} onChange={(e) => setValor(e.target.value)} error={valor && !(numero > 0) ? "Type an amount" : undefined} accessory={<Text color="secondary">USD</Text>} />
+          {frequencia === "monthly" && <Row title="Months" accessory={<Stepper label="Months" value={meses} onChange={setMeses} min={2} max={24} />} />}
+          <Row title="Notify Ana" accessory={<Toggle isOn={avisar} onChange={setAvisar} label="Notify Ana" />} />
         </Section>
-        <Section header="Status">
-          <HStack spacing={8} style={{ padding: 16, flexWrap: "wrap" }}>
-            <Badge tone="success">Paid</Badge>
-            <Badge tone="warning">Pending</Badge>
-            <Badge tone="tint">Scheduled</Badge>
-            <Badge tone="danger">Declined</Badge>
-            <Badge>Draft</Badge>
-          </HStack>
+        <Button state={estado} onClick={enviar} loadingLabel="Sending…" doneLabel="Sent" disabled={!(numero > 0)}>
+          {frequencia === "once" ? `Send $${(numero || 0).toFixed(2)}` : "Schedule transfers"}
+        </Button>
+      </List>
+    </>
+  );
+}
+
+const CONTA = [
+  { nome: "Ana Souza", parte: 32.5 },
+  { nome: "Leo Park", parte: 32.5 },
+  { nome: "Maya Chen", parte: 32.5 },
+];
+
+/** Toasts: splitting a dinner bill. */
+export function DemoToasts() {
+  const { show } = useToast();
+  const [pedido, setPedido] = useState(false);
+  const pedir = () => {
+    const t = show("Sending 3 requests…", "progress");
+    window.setTimeout(() => {
+      t.update("3 requests sent", "success", { label: "Undo", onPress: () => setPedido(false) });
+      setPedido(true);
+    }, 1600);
+  };
+  return (
+    <>
+      <NavigationBar title="Split bill" />
+      <List>
+        <Card>
+          <VStack spacing={2} alignment="leading">
+            <Text font="subheadline" color="secondary">
+              Sunset Diner · Today
+            </Text>
+            <Text font="title" as="p">
+              $130.00
+            </Text>
+            <Text font="footnote" color="secondary">
+              Split 4 ways, you paid
+            </Text>
+          </VStack>
+        </Card>
+        <Section header="Requests">
+          {CONTA.map((p) => (
+            <Row key={p.nome} leading={<Avatar name={p.nome} />} title={p.nome} subtitle={pedido ? "Requested just now" : "Not requested yet"} value={`$${p.parte.toFixed(2)}`} />
+          ))}
         </Section>
-        <VStack spacing={8}>
-          <Button size="large" state={estado} onClick={salvar} loadingLabel="Saving…" doneLabel="Saved">
-            Save
+        <VStack spacing={4}>
+          <Button onClick={pedir} disabled={pedido}>
+            {pedido ? "Requests sent" : "Request $97.50"}
           </Button>
-          <Button size="large" variant="plain">
-            Cancel
+          <Button variant="plain" onClick={() => show("You are offline. We will send it later.", "info")}>
+            Remind later
           </Button>
         </VStack>
       </List>
@@ -146,59 +255,38 @@ export function DemoControls() {
   );
 }
 
-export function DemoToasts() {
-  const { show } = useToast();
-  const transferir = () => {
-    const t = show("Sending $120.00…", "progress");
-    window.setTimeout(() => t.update("$120.00 sent to Leo", "success", { label: "Receipt", onPress: () => undefined }), 1800);
-  };
-  return (
-    <>
-      <NavigationBar title="Toasts" />
-      <List>
-        <Section footer="One at a time: a new toast waits for the current one to leave.">
-          <VStack spacing={10} style={{ padding: 16 }}>
-            <Button onClick={transferir}>Send money</Button>
-            <Button variant="bordered" onClick={() => show("Budget saved")}>
-              Success
-            </Button>
-            <Button variant="bordered" onClick={() => show("Offline: it syncs when you are back", "info")}>
-              Info
-            </Button>
-            <Button variant="destructive" onClick={() => show("Card declined", "error", { label: "Why", onPress: () => undefined })}>
-              Error with an action
-            </Button>
-          </VStack>
-        </Section>
-      </List>
-    </>
-  );
-}
+const CONTAS = ["City Power", "Water & Sewer", "Fiber Internet", "Mobile plan", "Rent", "Car insurance", "Gym Club", "Streaming"];
 
-const TODAS: Categoria[] = ["groceries", "dining", "transport", "shopping", "bills", "health", "travel", "fun", "salary", "transfer"];
-
+/** Pickers: scheduling a bill payment. */
 export function DemoPickers() {
+  const { show } = useToast();
+  const [conta, setConta] = useState("City Power");
   const [data, setData] = useState("");
-  const [hora, setHora] = useState("");
-  const [categoria, setCategoria] = useState<Categoria | "">("");
+  const [hora, setHora] = useState("09:00");
   const [escolhendo, setEscolhendo] = useState(false);
   return (
     <>
-      <NavigationBar title="Pickers" />
+      <NavigationBar title="Pay a bill" />
       <List>
-        <Section header="Schedule a payment" footer="The same on iPhone and Android, in any language.">
-          <PickerRow label="Category" value={categoria ? CATEGORIAS[categoria].nome : ""} onClick={() => setEscolhendo(true)} />
-          <Row title="Date" accessory={<DatePicker value={data} onChange={setData} title="Payment date" locale="en-US" shortcuts={[]} />} />
+        <Section header="Bill">
+          <PickerRow label="Payee" value={conta} onClick={() => setEscolhendo(true)} />
+          <Row title="Amount due" value="$119.68" />
+        </Section>
+        <Section header="When" footer="Payments made before 6 pm arrive the same day.">
+          <Row title="Date" accessory={<DatePicker value={data} onChange={setData} title="Payment date" locale="en-US" />} />
           <Row title="Time" accessory={<TimePicker value={hora} onChange={setHora} title="Payment time" />} />
         </Section>
+        <Button disabled={!data} onClick={() => show(`Scheduled for ${data.slice(5).replace("-", "/")} at ${hora}`)}>
+          Schedule payment
+        </Button>
       </List>
-      <Sheet isPresented={escolhendo} onDismiss={() => setEscolhendo(false)} title="Category">
+      <Sheet isPresented={escolhendo} onDismiss={() => setEscolhendo(false)} title="Payee">
         <ListPicker
-          label="Category"
-          options={TODAS.map((c) => ({ value: c, label: CATEGORIAS[c].nome, icon: ICONES_CATEGORIA[c] }))}
-          selection={categoria}
+          label="Payee"
+          options={CONTAS.map((c) => ({ value: c, label: c }))}
+          selection={conta}
           onChange={(c) => {
-            setCategoria(c);
+            setConta(c);
             setEscolhendo(false);
           }}
         />

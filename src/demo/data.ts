@@ -48,7 +48,7 @@ export function gerarLancamentos(): Lancamento[] {
   const hoje = new Date();
   return Array.from({ length: 20000 }, (_, i) => {
     const d = new Date(hoje);
-    d.setDate(hoje.getDate() - Math.floor(i / 9));
+    d.setDate(hoje.getDate() - Math.floor(i / 3));
     if (i % 60 === 7) return { id: String(i + 1), titulo: "Northwind Payroll", categoria: "salary", valor: 4200, data: iso(d) };
     if (i % 23 === 5) return { id: String(i + 1), titulo: "Transfer from Ana", categoria: "transfer", valor: 150, data: iso(d) };
     const [titulo, categoria, base] = GASTOS[(i * 7) % GASTOS.length];

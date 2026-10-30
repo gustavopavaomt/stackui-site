@@ -27,11 +27,11 @@ const CORES = [
 ];
 
 const VISTAS = [
-  { demo: "navigation", nome: "Navigation", texto: "Screens slide in. Going back slides them out, right where you left off." },
-  { demo: "sheets", nome: "Sheets", texto: "Drag a sheet down to dismiss it. Confirm before anything is saved." },
-  { demo: "controls", nome: "Controls", texto: "Switches, steppers and buttons that show their own progress." },
-  { demo: "toasts", nome: "Toasts", texto: "One message at a time. “Sending…” turns into “Sent” in place." },
-  { demo: "pickers", nome: "Pickers", texto: "Dates, times and long lists. The same on every phone, in any language." },
+  { demo: "navigation", nome: "Navigation", texto: "Settings that push to an account and slide back, right where you left off." },
+  { demo: "sheets", nome: "Sheets", texto: "Card details in a sheet you drag to close, a confirmation before ordering, an alert before blocking." },
+  { demo: "controls", nome: "Controls", texto: "A transfer form: a segmented picker, an amount field, a stepper and a button that shows its progress." },
+  { demo: "toasts", nome: "Toasts", texto: "Split a bill. The requests go out with a toast that turns from “Sending…” into “Sent”." },
+  { demo: "pickers", nome: "Pickers", texto: "Pay a bill: the payee from a searchable list, then the date and the time." },
 ];
 
 /** A phone running one demo. Colors arrive in the URL first, then by message (the demo keeps its state). */

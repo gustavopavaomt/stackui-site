@@ -18,6 +18,8 @@
       "react-dom": ["./node_modules/@types/react-dom"],
       "react-dom/*": ["./node_modules/@types/react-dom/*"],
       "@stackui/react": ["../stackui/packages/react/src/index.ts"],
+      "@stackui/react/barcode": ["../stackui/packages/react/src/barcode.ts"],
+      "@zxing/*": ["./node_modules/@zxing/*"],
       "@stackui/react/styles.css": ["../stackui/packages/react/src/styles/index.css"]
     }
   },

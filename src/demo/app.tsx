@@ -2,7 +2,6 @@ import { createContext, useContext, useEffect, useMemo, useState, type ReactNode
 
 import {
   Alert,
-  Badge,
   Button,
   Card,
   DatePicker,
@@ -20,7 +19,6 @@ import {
   SearchField,
   Section,
   Sheet,
-  Spacer,
   TabBar,
   Text,
   TextEditor,
@@ -223,19 +221,28 @@ function Inicio() {
       <NavigationBar title="Wallet" trailing={menuNovo(editar)} />
       <List>
         <Card>
-          <VStack spacing={4} alignment="leading">
-            <Text font="subheadline" color="secondary">
-              Balance
-            </Text>
-            <Text font="largeTitle" as="p">
-              {moeda(saldo)}
-            </Text>
-            <HStack spacing={8} style={{ marginTop: 8 }}>
-              <Badge tone="success">In {moeda(entrou)}</Badge>
-              <Badge tone="danger">Out {moeda(saiu)}</Badge>
-              <Spacer />
-            </HStack>
-          </VStack>
+          <Text font="subheadline" color="secondary">
+            Total balance
+          </Text>
+          <Text font="largeTitle" as="p" style={{ marginTop: 2 }}>
+            {moeda(saldo)}
+          </Text>
+          <HStack alignment="leading" style={{ marginTop: 16, paddingTop: 14, borderTop: "0.5px solid var(--st-separator)" }}>
+            <VStack spacing={2} alignment="leading" style={{ flex: 1 }}>
+              <Text font="footnote" color="secondary">
+                Income this month
+              </Text>
+              <Text font="headline" style={{ color: "var(--st-success)" }}>
+                {moeda(entrou, true)}
+              </Text>
+            </VStack>
+            <VStack spacing={2} alignment="leading" style={{ flex: 1 }}>
+              <Text font="footnote" color="secondary">
+                Spent this month
+              </Text>
+              <Text font="headline">{moeda(-saiu)}</Text>
+            </VStack>
+          </HStack>
         </Card>
         <Section header="Recent" headerAccessory={<a href="#/activity" style={{ color: "var(--st-tint)", fontSize: 15, textDecoration: "none" }}>See all</a>}>
           {lancamentos.slice(0, 6).map((l) => (

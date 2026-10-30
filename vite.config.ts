@@ -15,9 +15,9 @@ export default defineConfig({
   // GitHub Pages serves the site under /stackui-site/.
   base: process.env.SITE_BASE ?? "/",
   resolve: {
-    alias: { "@stackui/react/styles.css": `${lib}styles/index.css`, "@stackui/react": `${lib}index.ts` },
+    alias: { "@stackui/react/styles.css": `${lib}styles/index.css`, "@stackui/react/barcode": `${lib}barcode.ts`, "@stackui/react": `${lib}index.ts` },
     // The library source sits outside this folder: React must still come from here, once.
-    dedupe: ["react", "react-dom"],
+    dedupe: ["react", "react-dom", "@zxing/browser", "@zxing/library"],
   },
   server: { port: 5310, fs: { allow: [raiz, lib] } },
   build: {
