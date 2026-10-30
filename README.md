@@ -1,0 +1,44 @@
+# StackUI · landing page
+
+The website of [StackUI](https://github.com/gustavopavaomt/stackui): **build dynamic and elegant PWA applications
+for iOS and Android with React.**
+
+Created by [Gustavo Pavão](https://github.com/gustavopavaomt).
+
+## How it is made
+
+- **The page has its own layout and CSS** (`src/landing`). It does not use the library for itself.
+- **The library runs inside the phones.** Each phone is an iframe of `demo.html` (`src/demo`), a small app built
+  with `@stackui/react`, one scenario per phone (`?d=app`, `navigation`, `sheets`, `controls`, `toasts`, `pickers`,
+  `lists`). The iframe keeps sheets, the tab bar and toasts inside their phone. It is laid out at a real phone width
+  (390 px) and scaled down to the frame.
+- The accent and appearance pickers send `{ type: "stackui-theme", tint, theme }` to every phone (`postMessage`,
+  same origin only).
+
+## Develop
+
+The demos use the library source from its repository, cloned next to this one:
+
+```
+Documents/
+  stackui/        ← github.com/gustavopavaomt/stackui
+  stackui-site/   ← this repository
+```
+
+```sh
+npm install
+npm run dev        # http://localhost:5310
+npm run build      # dist/, with index.html and demo.html
+```
+
+Point to another copy of the library with `STACKUI_SRC=/path/to/stackui/packages/react/src/`. Once
+`@stackui/react` is on npm, the demos will install it like any app.
+
+## Deploy
+
+Every push to `main` builds and publishes to GitHub Pages (`.github/workflows/pages.yml`), under
+`/stackui-site/`.
+
+## License
+
+[MIT](LICENSE) © Gustavo Pavão
