@@ -1,6 +1,8 @@
 import { StrictMode, useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 
+import { DocsPage } from "../site/docs-page";
+
 import "./landing.css";
 
 /*
@@ -171,8 +173,8 @@ function Landing() {
           <div className="localnav__menu">
             <a href="#closer-look">Overview</a>
             <a href="#make-it-yours">Design</a>
-            <a href="#start">Developers</a>
-            <a href="#start" className="pill pill--small">
+            <a href="#/docs/introduction">Docs</a>
+            <a href="#/docs/installation" className="pill pill--small">
               Install
             </a>
           </div>
@@ -189,7 +191,7 @@ function Landing() {
           </p>
           <p className="hero__lead">Build dynamic and elegant PWA applications for iOS and Android with React.</p>
           <div className="hero__ctas">
-            <a href="#start" className="pill">
+            <a href="#/docs/introduction" className="pill">
               Get started
             </a>
             <a href={GITHUB} className="link link--chevron">
@@ -295,7 +297,7 @@ function Landing() {
             <code>{CODIGO}</code>
           </pre>
           <div className="hero__ctas">
-            <a href={`${GITHUB}#readme`} className="link link--chevron">
+            <a href="#/docs/introduction" className="link link--chevron">
               Read the documentation
             </a>
             <a href={GITHUB} className="link link--chevron">
@@ -331,8 +333,24 @@ function Landing() {
   );
 }
 
+/** Two pages: the product page and the docs (#/docs/<page>). Hash routes work on GitHub Pages without a server. */
+function Site() {
+  const ler = () => (location.hash.startsWith("#/docs") ? location.hash.slice(7) || "introduction" : null);
+  const [doc, setDoc] = useState(ler);
+  useEffect(() => {
+    const mudou = () => {
+      const novo = ler();
+      setDoc(novo);
+      if (novo === null) document.title = "StackUI · PWA apps for iOS and Android with React";
+    };
+    window.addEventListener("hashchange", mudou);
+    return () => window.removeEventListener("hashchange", mudou);
+  }, []);
+  return doc !== null ? <DocsPage slug={doc} /> : <Landing />;
+}
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <Landing />
+    <Site />
   </StrictMode>,
 );

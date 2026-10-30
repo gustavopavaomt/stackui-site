@@ -120,9 +120,8 @@ function Pessoas() {
       <NavigationBar title="People" />
       <List>
         <Section>
-          {["Ana", "Leo", "Maya"].map((n) => (
-            <Row key={n} leading={<Avatar name={n} />} title={n} href={`#/people/${n}`} />
-          ))}
+          <Row title="Ana" href="#/people/Ana" />
+          <Row title="Leo" href="#/people/Leo" />
         </Section>
       </List>
     </>

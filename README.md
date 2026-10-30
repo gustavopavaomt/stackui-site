@@ -15,6 +15,16 @@ Created by [Gustavo Pavão](https://github.com/gustavopavaomt).
 - The color picker under the “Make it yours” phone sends `{ type: "stackui-theme", tint, theme }` to it
   (`postMessage`, same origin only).
 
+## The docs
+
+`#/docs/<page>` is the documentation, in the spirit of reactnative.dev: guides (The Basics) and one page per
+component, each with a live example next to its code and the props reference.
+
+- Pages are Markdown in `src/site/content/`, in the sidebar order of `src/site/docs.ts`.
+- `@example <name> <height>` before a code fence shows the live example `demo.html?c=<name>`
+  (`src/demo/previews.tsx`) next to that code. Keep both in sync.
+- `@props <Component>` renders the reference from `src/site/props.ts`.
+
 ## Develop
 
 The demos use the library source from its repository, cloned next to this one:
