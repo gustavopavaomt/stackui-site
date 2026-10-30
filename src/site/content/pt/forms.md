@@ -4,7 +4,7 @@ Formulários também são listas: campos e controles ficam em seções, e o bot�
 
 @example text-field 260
 ```tsx
-import { List, Section, TextField } from "@stackui/react";
+import { List, Section, TextField } from "stackui";
 
 const [email, setEmail] = useState("");
 const invalido = email.length > 0 && !email.includes("@");
@@ -32,7 +32,7 @@ Dê um `state` ao botão de salvar. Ele mostra um carregando enquanto salva e um
 
 @example button 340
 ```tsx
-import { Button, type ButtonState } from "@stackui/react";
+import { Button, type ButtonState } from "stackui";
 
 const [estado, setEstado] = useState<ButtonState>("idle");
 

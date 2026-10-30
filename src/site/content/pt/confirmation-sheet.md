@@ -4,7 +4,7 @@ Conferir antes de gravar: o que vai acontecer, em linhas de recibo, e um botão 
 
 @example confirmation-sheet 560
 ```tsx
-import { ConfirmationSheet, type ButtonState } from "@stackui/react";
+import { ConfirmationSheet, type ButtonState } from "stackui";
 
 const [estado, setEstado] = useState<ButtonState>("idle");
 

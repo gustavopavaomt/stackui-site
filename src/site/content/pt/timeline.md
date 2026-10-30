@@ -4,7 +4,7 @@ Onde algo está, como o rastreio de uma entrega: cada etapa com seu marcador, a 
 
 @example timeline 340
 ```tsx
-import { Section, Timeline } from "@stackui/react";
+import { Section, Timeline } from "stackui";
 
 <Section header="Entrega">
   <Timeline steps={[

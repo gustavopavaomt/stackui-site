@@ -4,7 +4,7 @@ The empty state: nothing here yet, no results, no connection.
 
 @example content-unavailable-view 380
 ```tsx
-import { Button, ContentUnavailableView } from "@stackui/react";
+import { Button, ContentUnavailableView } from "stackui";
 
 <ContentUnavailableView title="No messages"
   description="Messages you receive show up here."

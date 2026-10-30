@@ -4,7 +4,7 @@ Choosing from a long list: a search on top, the list below, opened at the curren
 
 @example list-picker 560
 ```tsx
-import { ListPicker, PickerRow, Section, Sheet } from "@stackui/react";
+import { ListPicker, PickerRow, Section, Sheet } from "stackui";
 
 <Section>
   <PickerRow label="Country" value={country} onClick={() => setOpen(true)} />

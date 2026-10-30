@@ -4,7 +4,7 @@
 
 @example progress-steps 260
 ```tsx
-import { ProgressSteps } from "@stackui/react";
+import { ProgressSteps } from "stackui";
 
 <ProgressSteps steps={[
   { text: "Tap the Share button", icon: <ShareIcon /> },

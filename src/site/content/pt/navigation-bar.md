@@ -4,7 +4,7 @@ O topo de uma tela: o título, o voltar e a barra de ferramentas. Transparente p
 
 @example navigation-bar 420
 ```tsx
-import { List, NavigationBar, ToolbarButton } from "@stackui/react";
+import { List, NavigationBar, ToolbarButton } from "stackui";
 
 <NavigationBar
   title="Entrada"

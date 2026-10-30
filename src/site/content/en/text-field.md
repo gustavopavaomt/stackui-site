@@ -4,7 +4,7 @@ A text field for a list, with a label that floats up when you type, and an error
 
 @example text-field 260
 ```tsx
-import { Section, TextField } from "@stackui/react";
+import { Section, TextField } from "stackui";
 
 <Section>
   <TextField label="Email" type="email" value={email}

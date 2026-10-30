@@ -4,7 +4,7 @@ A rounded surface. Give it `href` or `onClick` and the whole card becomes tappab
 
 @example card 220
 ```tsx
-import { Card, Text } from "@stackui/react";
+import { Card, Text } from "stackui";
 
 <Card href="/goals">
   <Text font="headline">Monthly goal</Text>

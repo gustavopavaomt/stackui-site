@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@v5
         with:
           path: stackui-site
-      # The live demos run the library source, checked out next to the site (until @stackui/react is on npm).
+      # The live demos run the library source, checked out next to the site (until stackui is on npm).
       - uses: actions/checkout@v5
         with:
           repository: gustavopavaomt/stackui

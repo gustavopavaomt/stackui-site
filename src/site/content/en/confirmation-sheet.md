@@ -4,7 +4,7 @@ Check before saving: what will happen, as receipt lines, and a button that shows
 
 @example confirmation-sheet 560
 ```tsx
-import { Button, ConfirmationSheet, type ButtonState } from "@stackui/react";
+import { Button, ConfirmationSheet, type ButtonState } from "stackui";
 
 const [state, setState] = useState<ButtonState>("idle");
 

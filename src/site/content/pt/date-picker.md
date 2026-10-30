@@ -4,7 +4,7 @@ Um botão de data compacto que abre um calendário numa folha, igual no iPhone e
 
 @example date-picker 560
 ```tsx
-import { DatePicker, Row } from "@stackui/react";
+import { DatePicker, Row } from "stackui";
 
 const [data, setData] = useState(""); // "2026-10-30"
 

@@ -4,7 +4,7 @@ A short message that rises from the bottom and leaves on its own. Toasts wait in
 
 @example toast 320
 ```tsx
-import { Button, useToast } from "@stackui/react";
+import { Button, useToast } from "stackui";
 
 const { show } = useToast();
 

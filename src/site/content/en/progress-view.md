@@ -4,7 +4,7 @@ The activity indicator: eight spokes that light up in turn. It takes the color o
 
 @example progress-view 160
 ```tsx
-import { HStack, ProgressView, Text } from "@stackui/react";
+import { HStack, ProgressView, Text } from "stackui";
 
 <HStack spacing={12}>
   <ProgressView />

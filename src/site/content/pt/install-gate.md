@@ -4,7 +4,7 @@ Roda o seu app só quando está instalado, e mostra como instalar em qualquer ou
 
 @example install-gate 560
 ```tsx
-import { InstallGate } from "@stackui/react";
+import { InstallGate } from "stackui";
 
 <InstallGate appName="Wallet" icon={<img src="/icone-192.png" alt="" />}
   texts={{ title: "Instale o app", install: "Instalar", copyLink: "Copiar link" /* … */ }}>

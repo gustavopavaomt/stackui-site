@@ -4,7 +4,7 @@ As iniciais de uma pessoa num círculo colorido, ou a foto dela. A cor é sempre
 
 @example avatar 180
 ```tsx
-import { Avatar } from "@stackui/react";
+import { Avatar } from "stackui";
 
 <Avatar name="Ana Souza" />
 <Avatar name="Leo Park" size={56} />

@@ -23,7 +23,7 @@ This is a complete screen. The next pages explain each piece.
 @example first-screen 360
 ```tsx
 import { useState } from "react";
-import { List, NavigationBar, Row, Section, Toggle } from "@stackui/react";
+import { List, NavigationBar, Row, Section, Toggle } from "stackui";
 
 export function Settings() {
   const [alerts, setAlerts] = useState(true);

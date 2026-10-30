@@ -4,7 +4,7 @@ Um botão de hora compacto que abre duas rodas, horas e minutos, numa folha.
 
 @example time-picker 560
 ```tsx
-import { Row, TimePicker } from "@stackui/react";
+import { Row, TimePicker } from "stackui";
 
 const [hora, setHora] = useState(""); // "09:30"
 

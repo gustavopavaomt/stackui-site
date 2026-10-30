@@ -4,7 +4,7 @@ A segmented control: two to four short options that exclude each other. The sele
 
 @example picker 220
 ```tsx
-import { Picker } from "@stackui/react";
+import { Picker } from "stackui";
 
 const [period, setPeriod] = useState<"day" | "week" | "month">("week");
 

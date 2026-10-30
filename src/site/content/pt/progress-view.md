@@ -4,7 +4,7 @@ O indicador de atividade: oito raios que acendem em roda. Ele pega a cor do text
 
 @example progress-view 160
 ```tsx
-import { HStack, ProgressView, Text } from "@stackui/react";
+import { HStack, ProgressView, Text } from "stackui";
 
 <HStack spacing={12}>
   <ProgressView label="Carregando" />

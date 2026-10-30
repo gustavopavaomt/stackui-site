@@ -4,7 +4,7 @@ Uma imagem que carrega sem deixar buraco: um brilho enquanto chega, um fade quan
 
 @example async-image 280
 ```tsx
-import { AsyncImage } from "@stackui/react";
+import { AsyncImage } from "stackui";
 
 <AsyncImage src={foto} alt="Uma paisagem" aspectRatio="16 / 9" width="100%"
   radius={16} fit="cover" showProgress fallback={<IconeFoto />} />

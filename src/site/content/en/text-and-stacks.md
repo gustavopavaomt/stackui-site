@@ -4,7 +4,7 @@ The layout primitives: `VStack`, `HStack`, `ZStack`, `Spacer`, `Divider` and `Te
 
 @example text-and-stacks 260
 ```tsx
-import { HStack, Spacer, Text, VStack } from "@stackui/react";
+import { HStack, Spacer, Text, VStack } from "stackui";
 
 <VStack spacing={12} style={{ padding: 16 }}>
   <VStack spacing={4} alignment="leading">

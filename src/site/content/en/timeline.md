@@ -4,7 +4,7 @@ Where something is, like tracking a delivery: each step with its marker, the one
 
 @example timeline 340
 ```tsx
-import { Section, Timeline } from "@stackui/react";
+import { Section, Timeline } from "stackui";
 
 <Section header="Delivery">
   <Timeline steps={[

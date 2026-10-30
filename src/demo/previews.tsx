@@ -42,8 +42,8 @@ import {
   normalizeSearch,
   useToast,
   type ButtonState,
-} from "@stackui/react";
-import { BarcodeScanner } from "@stackui/react/barcode";
+} from "stackui";
+import { BarcodeScanner } from "stackui/barcode";
 
 import { CASA, COMPARTILHAR, COPIAR, ENGRENAGEM, LAPIS, LISTA, LIXO, MAIS, RETICENCIAS, ROSTO, SINO, CARTAO } from "./icons";
 import { L, LOCALE, PT } from "./lang";

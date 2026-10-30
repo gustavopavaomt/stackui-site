@@ -4,7 +4,7 @@ Minus, the number and plus. The number can also be typed, with a comma or a dot.
 
 @example stepper 200
 ```tsx
-import { Row, Stepper } from "@stackui/react";
+import { Row, Stepper } from "stackui";
 
 const [guests, setGuests] = useState(2);
 

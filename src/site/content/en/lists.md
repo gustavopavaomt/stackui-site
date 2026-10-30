@@ -4,7 +4,7 @@ Most screens in a phone app are lists: settings, messages, transactions. In Stac
 
 @example list 380
 ```tsx
-import { List, Row, Section, Toggle } from "@stackui/react";
+import { List, Row, Section, Toggle } from "stackui";
 
 <List>
   <Section header="Account" footer="Your data stays on this device.">
@@ -32,7 +32,7 @@ A list of thousands of rows needs `LazyList`: it draws only the rows on screen a
 
 @example lazy-list 420
 ```tsx
-import { Avatar, LazyList, List, Row, Section } from "@stackui/react";
+import { Avatar, LazyList, List, Row, Section } from "stackui";
 
 <List>
   <Section header="20,000 people" plain>

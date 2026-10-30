@@ -9,7 +9,7 @@ Created by [Gustavo Pavão](https://github.com/gustavopavaomt).
 
 - **The page has its own layout and CSS** (`src/landing`). It does not use the library for itself.
 - **The library runs inside the phones.** Each phone is an iframe of `demo.html` (`src/demo`): Wallet, a small
-  finance app built with `@stackui/react` (balance, 20,000 transactions, create, edit and delete), plus one scenario
+  finance app built with `stackui` (balance, 20,000 transactions, create, edit and delete), plus one scenario
   per phone (`?d=app`, `navigation`, `sheets`, `controls`, `toasts`, `pickers`, `lists`). All data is invented. The iframe keeps sheets, the tab bar and toasts inside their phone. It is laid out at a real phone width
   (390 px) and scaled down to the frame.
 - The color picker under the “Make it yours” phone sends `{ type: "stackui-theme", tint, theme }` to it
@@ -42,7 +42,7 @@ npm run build      # dist/, with index.html and demo.html
 ```
 
 Point to another copy of the library with `STACKUI_SRC=/path/to/stackui/packages/react/src/`. Once
-`@stackui/react` is on npm, the demos will install it like any app.
+`stackui` is on npm, the demos will install it like any app.
 
 ## Deploy
 

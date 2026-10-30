@@ -4,7 +4,7 @@ The bottom bar of the main sections: a floating capsule where the selected tab i
 
 @example tab-bar 300
 ```tsx
-import { TabBar } from "@stackui/react";
+import { TabBar } from "stackui";
 
 const [tab, setTab] = useState("home");
 

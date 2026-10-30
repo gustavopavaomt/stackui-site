@@ -4,7 +4,7 @@ Lê códigos de barras de produtos pela câmera, sem internet. É uma entrada se
 
 @example barcode-scanner 560
 ```tsx
-import { BarcodeScanner } from "@stackui/react/barcode";
+import { BarcodeScanner } from "stackui/barcode";
 
 <Sheet isPresented={aberta} onDismiss={() => setAberta(false)} title="Ler código" closeLabel="Fechar">
   {aberta && (

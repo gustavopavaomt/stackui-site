@@ -4,7 +4,7 @@ Menos, o número e mais. O número também pode ser digitado, com vírgula ou po
 
 @example stepper 200
 ```tsx
-import { Row, Stepper } from "@stackui/react";
+import { Row, Stepper } from "stackui";
 
 const [convidados, setConvidados] = useState(2);
 

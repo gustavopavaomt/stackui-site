@@ -1,8 +1,8 @@
 import { StrictMode, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 
-import "@stackui/react/styles.css";
-import { App, ToastProvider } from "@stackui/react";
+import "stackui/styles.css";
+import { App, ToastProvider } from "stackui";
 
 import { DemoApp, DemoLists, DemoNavigation } from "./app";
 import { PREVIEWS } from "./previews";

@@ -4,7 +4,7 @@ Uma chave de liga e desliga para algo que vale na hora.
 
 @example toggle 200
 ```tsx
-import { Row, Toggle } from "@stackui/react";
+import { Row, Toggle } from "stackui";
 
 const [ligado, setLigado] = useState(true);
 

@@ -8,7 +8,7 @@ A toast is a short message that rises from the bottom and leaves on its own. Cal
 
 @example toast 320
 ```tsx
-import { Button, useToast } from "@stackui/react";
+import { Button, useToast } from "stackui";
 
 const { show } = useToast();
 
@@ -28,7 +28,7 @@ Show the shape of the content while it loads. `Redacted` shows the placeholder o
 
 @example redacted 360
 ```tsx
-import { Redacted, Section, SkeletonList } from "@stackui/react";
+import { Redacted, Section, SkeletonList } from "stackui";
 
 <Section header="Contacts">
   <Redacted isLoading={!contacts} placeholder={<SkeletonList rows={3} leading="circle" />}>
@@ -41,7 +41,7 @@ import { Redacted, Section, SkeletonList } from "@stackui/react";
 
 @example content-unavailable-view 380
 ```tsx
-import { Button, ContentUnavailableView } from "@stackui/react";
+import { Button, ContentUnavailableView } from "stackui";
 
 <ContentUnavailableView title="No messages"
   description="Messages you receive show up here."

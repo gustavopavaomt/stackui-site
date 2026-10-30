@@ -4,7 +4,7 @@ Escolher numa lista longa: a busca em cima, a lista embaixo, aberta na escolha a
 
 @example list-picker 560
 ```tsx
-import { ListPicker, PickerRow, Section, Sheet } from "@stackui/react";
+import { ListPicker, PickerRow, Section, Sheet } from "stackui";
 
 <Section>
   <PickerRow label="País" value={pais} placeholder="Escolher" onClick={() => setAberta(true)} />

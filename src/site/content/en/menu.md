@@ -4,7 +4,7 @@ A toolbar button that opens a menu of actions anchored to it. Destructive action
 
 @example menu 320
 ```tsx
-import { Menu, NavigationBar } from "@stackui/react";
+import { Menu, NavigationBar } from "stackui";
 
 <NavigationBar
   title="Note"

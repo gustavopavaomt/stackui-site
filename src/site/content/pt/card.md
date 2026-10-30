@@ -4,7 +4,7 @@ Uma superfície arredondada. Com `href` ou `onClick`, o cartão inteiro vira toc
 
 @example card 220
 ```tsx
-import { Card, Text } from "@stackui/react";
+import { Card, Text } from "stackui";
 
 <Card href="/metas">
   <Text font="headline">Meta do mês</Text>

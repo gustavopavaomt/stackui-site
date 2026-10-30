@@ -5,7 +5,7 @@ import { defineConfig } from "vite";
 
 /**
  * The live demos run the library from its repository, checked out next to this one (`../stackui`), until
- * `@stackui/react` is on npm. Point somewhere else with STACKUI_SRC.
+ * `stackui` is on npm. Point somewhere else with STACKUI_SRC.
  */
 const lib = process.env.STACKUI_SRC ?? fileURLToPath(new URL("../stackui/packages/react/src/", import.meta.url));
 const raiz = fileURLToPath(new URL(".", import.meta.url));
@@ -15,7 +15,7 @@ export default defineConfig({
   // GitHub Pages serves the site under /stackui-site/.
   base: process.env.SITE_BASE ?? "/",
   resolve: {
-    alias: { "@stackui/react/styles.css": `${lib}styles/index.css`, "@stackui/react/barcode": `${lib}barcode.ts`, "@stackui/react": `${lib}index.ts` },
+    alias: { "stackui/styles.css": `${lib}styles/index.css`, "stackui/barcode": `${lib}barcode.ts`, "stackui": `${lib}index.ts` },
     // The library source sits outside this folder: React must still come from here, once.
     dedupe: ["react", "react-dom", "@zxing/browser", "@zxing/library"],
   },

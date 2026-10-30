@@ -4,7 +4,7 @@ Um campo de texto para listas, com rótulo que sobe quando você digita e mensag
 
 @example text-field 260
 ```tsx
-import { Section, TextField } from "@stackui/react";
+import { Section, TextField } from "stackui";
 
 <Section>
   <TextField label="Email" type="email" value={email}

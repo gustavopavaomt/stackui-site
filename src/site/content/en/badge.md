@@ -4,7 +4,7 @@ A small capsule for a status. Always with words, never color alone.
 
 @example badge 160
 ```tsx
-import { Badge } from "@stackui/react";
+import { Badge } from "stackui";
 
 <Badge>Draft</Badge>
 <Badge tone="tint">New</Badge>

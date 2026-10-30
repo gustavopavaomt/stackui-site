@@ -4,7 +4,7 @@ A list of thousands of rows that stays smooth: only the rows on screen exist, an
 
 @example lazy-list 420
 ```tsx
-import { Avatar, LazyList, List, Row, Section } from "@stackui/react";
+import { Avatar, LazyList, List, Row, Section } from "stackui";
 
 <List>
   <Section header="20,000 people" plain>

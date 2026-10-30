@@ -8,7 +8,7 @@ A sheet is controlled by `isPresented`: set it to `true` to open it and close it
 
 @example sheet 460
 ```tsx
-import { Button, List, Row, Section, Sheet } from "@stackui/react";
+import { Button, List, Row, Section, Sheet } from "stackui";
 
 const [isPresented, setIsPresented] = useState(false);
 
@@ -35,7 +35,7 @@ const [isPresented, setIsPresented] = useState(false);
 
 @example alert 360
 ```tsx
-import { Alert, Button } from "@stackui/react";
+import { Alert, Button } from "stackui";
 
 <Button variant="destructive" onClick={() => setOpen(true)}>Delete photo</Button>
 

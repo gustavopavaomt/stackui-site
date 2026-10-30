@@ -8,7 +8,7 @@ Um aviso é uma mensagem curta que sobe do rodapé e some sozinha. Chame `show` 
 
 @example toast 320
 ```tsx
-import { Button, useToast } from "@stackui/react";
+import { Button, useToast } from "stackui";
 
 const { show } = useToast();
 
@@ -28,7 +28,7 @@ Mostre o formato do conteúdo enquanto ele carrega. O `Redacted` só mostra o es
 
 @example redacted 360
 ```tsx
-import { Redacted, Section, SkeletonList } from "@stackui/react";
+import { Redacted, Section, SkeletonList } from "stackui";
 
 <Section header="Contatos">
   <Redacted isLoading={!contatos} placeholder={<SkeletonList rows={3} leading="circle" label="Carregando…" />}>
@@ -41,7 +41,7 @@ import { Redacted, Section, SkeletonList } from "@stackui/react";
 
 @example content-unavailable-view 380
 ```tsx
-import { Button, ContentUnavailableView } from "@stackui/react";
+import { Button, ContentUnavailableView } from "stackui";
 
 <ContentUnavailableView title="Nenhuma mensagem"
   description="As mensagens que você receber aparecem aqui."
