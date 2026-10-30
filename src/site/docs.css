@@ -12,7 +12,7 @@
   backdrop-filter: saturate(180%) blur(20px);
 }
 .docs-top__inner { display: flex; align-items: center; gap: 32px; max-width: 1440px; height: 56px; margin: 0 auto; padding: 0 24px; }
-.docs-top__brand { color: var(--ink); font-family: var(--display); font-size: 20px; font-weight: 600; letter-spacing: 0.01em; }
+.docs-top__brand { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); font-family: var(--display); font-size: 20px; font-weight: 600; letter-spacing: 0.01em; }
 .docs-top__brand:hover { text-decoration: none; }
 .docs-top__nav { display: flex; gap: 24px; font-size: 14px; }
 .docs-top__nav a { color: var(--ink-2); }

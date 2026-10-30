@@ -192,6 +192,7 @@ export function DocsPage({ slug }: { slug: string }) {
       <header className="docs-top">
         <div className="docs-top__inner">
           <a href="#top" className="docs-top__brand">
+            <img src={`${BASE}favicon.svg`} alt="" width={24} height={24} />
             StackUI
           </a>
           <nav className="docs-top__nav" aria-label="Site">

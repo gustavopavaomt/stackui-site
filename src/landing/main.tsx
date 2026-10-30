@@ -20,10 +20,10 @@ const LARGURA_APARELHO = 390;
 type Tema = "light" | "dark";
 
 const CORES = [
+  { nome: "Violet", valor: "#5a48f5" },
   { nome: "Blue", valor: "#007aff" },
   { nome: "Forest", valor: "#0e8a4a" },
   { nome: "Sunset", valor: "#f26b1d" },
-  { nome: "Indigo", valor: "#5856d6" },
   { nome: "Rose", valor: "#e5376f" },
   { nome: "Graphite", valor: "#3a3a3c" },
 ];
@@ -131,12 +131,15 @@ function Instalar() {
     }
   };
   return (
-    <div className="install">
-      <code className="install__command">{INSTALAR}</code>
-      <button type="button" className="link" onClick={copiar} aria-live="polite">
+    <button type="button" className="install" onClick={copiar} aria-label={`Copy: ${INSTALAR}`}>
+      <span className="install__prompt" aria-hidden>
+        $
+      </span>
+      <code>{INSTALAR}</code>
+      <span className="install__state" aria-live="polite">
         {copiado ? "Copied" : "Copy"}
-      </button>
-    </div>
+      </span>
+    </button>
   );
 }
 
@@ -159,23 +162,38 @@ export function Settings() {
   );
 }`;
 
+/** The StackUI mark: three stacked bars, the last one shorter. */
+function Marca({ tamanho = 26 }: { tamanho?: number }) {
+  return (
+    <svg viewBox="0 0 64 64" width={tamanho} height={tamanho} aria-hidden className="mark">
+      <rect width="64" height="64" rx="15" fill="var(--brand)" />
+      <rect x="14" y="14" width="36" height="9" rx="4.5" fill="#fff" />
+      <rect x="14" y="27.5" width="36" height="9" rx="4.5" fill="#fff" opacity=".8" />
+      <rect x="14" y="41" width="22" height="9" rx="4.5" fill="#fff" opacity=".6" />
+    </svg>
+  );
+}
+
+const Rotulo = ({ children }: { children: string }) => <p className="kicker rise">{children}</p>;
+
 function Landing() {
   const [cor, setCor] = useState(CORES[0]);
   const [tema, setTema] = useState<Tema>("light");
 
   return (
     <>
-      <nav className="localnav" aria-label="StackUI">
-        <div className="localnav__inner">
-          <a href="#top" className="localnav__title">
+      <nav className="topbar" aria-label="StackUI">
+        <div className="topbar__inner">
+          <a href="#top" className="topbar__brand">
+            <Marca />
             StackUI
           </a>
-          <div className="localnav__menu">
-            <a href="#closer-look">Overview</a>
-            <a href="#make-it-yours">Design</a>
+          <div className="topbar__menu">
             <a href="#/docs/introduction">Docs</a>
-            <a href="#/docs/installation" className="pill pill--small">
-              Install
+            <a href="#/docs/text-and-stacks">Components</a>
+            <a href={GITHUB}>GitHub</a>
+            <a href="#/docs/introduction" className="btn btn--small">
+              Get started
             </a>
           </div>
         </div>
@@ -183,33 +201,42 @@ function Landing() {
 
       <main id="top">
         <section className="hero">
-          <h1 className="hero__product">StackUI</h1>
-          <p className="hero__headline">
+          <p className="kicker">@stackui/react · open source</p>
+          <h1 className="hero__headline">
             Native feel.
             <br />
-            No app store.
-          </p>
+            <span className="hero__accent">No app store.</span>
+          </h1>
           <p className="hero__lead">Build dynamic and elegant PWA applications for iOS and Android with React.</p>
           <div className="hero__ctas">
-            <a href="#/docs/introduction" className="pill">
+            <a href="#/docs/introduction" className="btn">
               Get started
             </a>
-            <a href={GITHUB} className="link link--chevron">
-              View on GitHub
+            <Instalar />
+          </div>
+          <p className="hero__credit">
+            Created by{" "}
+            <a href={AUTOR} className="hero__author">
+              Gustavo Pavão
             </a>
-          </div>
+          </p>
           <div className="hero__device">
-            <Phone demo="app" titulo="Wallet, a finance app built with StackUI. It is live: tap it." tamanho="large" />
+            <Phone demo="app" titulo="Wallet, a finance app built with StackUI. It is live: tap it." tint={CORES[0].valor} tamanho="large" />
+            <p className="hero__note">
+              <span className="live-dot" aria-hidden /> Live app. Tap it.
+            </p>
           </div>
-          <p className="hero__note">A live app, not a video. Go ahead, tap it.</p>
         </section>
 
-        <section id="closer-look" className="section section--gray">
-          <h2 className="section__headline rise">Take a closer look.</h2>
+        <section id="screens" className="section section--tint">
+          <Rotulo>01 · In motion</Rotulo>
+          <h2 className="section__headline rise">Five screens. One library.</h2>
+          <p className="section__lead rise">Each one is a real screen of Wallet, our example app, built only with StackUI.</p>
           <Visor />
         </section>
 
-        <section className="section section--black">
+        <section className="section section--night">
+          <Rotulo>02 · Performance</Rotulo>
           <h2 className="section__headline rise">
             20,000 rows.
             <br />
@@ -217,91 +244,108 @@ function Landing() {
           </h2>
           <p className="section__lead rise">LazyList draws only what is on screen and recycles every cell, the way native lists do. Scroll as fast as you like.</p>
           <div className="section__device">
-            <Phone demo="lists" titulo="A list of 20,000 transactions" tema="dark" tamanho="large" />
+            <Phone demo="lists" titulo="A list of 20,000 transactions" tint="#8b7dff" tema="dark" tamanho="large" />
           </div>
         </section>
 
-        <section id="make-it-yours" className="section">
-          <h2 className="section__headline rise">Make it yours.</h2>
-          <p className="section__lead rise">One CSS variable sets the accent across every component. Light and dark come built in.</p>
-          <div className="section__device">
-            <Phone demo="controls" titulo={`Controls in ${cor.nome}, ${tema} appearance`} tint={cor.valor} tema={tema} tamanho="large" />
-          </div>
-          <div className="finish">
-            <p className="finish__name" aria-live="polite">
-              {cor.nome}
-            </p>
-            <div className="finish__swatches" role="radiogroup" aria-label="Accent color">
-              {CORES.map((c) => (
-                <button key={c.valor} type="button" role="radio" aria-checked={cor.valor === c.valor} aria-label={c.nome} className="finish__swatch" style={{ "--swatch": c.valor } as React.CSSProperties} onClick={() => setCor(c)} />
-              ))}
+        <section id="theming" className="section">
+          <div className="playground">
+            <div className="playground__text">
+              <Rotulo>03 · Theming</Rotulo>
+              <h2 className="section__headline section__headline--left rise">Your brand, everywhere.</h2>
+              <p className="section__lead section__lead--left rise">One CSS variable sets the accent across every component. Light and dark come built in. Try it.</p>
+              <div className="playground__panel">
+                <p className="playground__label">Accent</p>
+                <div className="chips" role="radiogroup" aria-label="Accent color">
+                  {CORES.map((c) => (
+                    <button key={c.valor} type="button" role="radio" aria-checked={cor.valor === c.valor} className="chip" onClick={() => setCor(c)}>
+                      <span className="chip__dot" style={{ background: c.valor }} aria-hidden />
+                      {c.nome}
+                    </button>
+                  ))}
+                </div>
+                <p className="playground__label">Appearance</p>
+                <div className="segment" role="radiogroup" aria-label="Appearance">
+                  {(["light", "dark"] as const).map((t) => (
+                    <button key={t} type="button" role="radio" aria-checked={tema === t} onClick={() => setTema(t)}>
+                      {t === "light" ? "Light" : "Dark"}
+                    </button>
+                  ))}
+                </div>
+                <pre className="playground__code">
+                  <code>
+                    <span className="c-sel">:root</span>
+                    {" {\n  "}
+                    <span className="c-prop">--st-tint</span>: <span className="c-val">{cor.valor}</span>
+                    {";\n}"}
+                    {tema === "dark" && (
+                      <>
+                        {"\n\n"}
+                        <span className="c-com">{"<!-- or follow the system -->"}</span>
+                        {"\n"}
+                        <span className="c-sel">{'<html data-theme="dark">'}</span>
+                      </>
+                    )}
+                  </code>
+                </pre>
+              </div>
             </div>
-            <div className="finish__appearance" role="radiogroup" aria-label="Appearance">
-              {(["light", "dark"] as const).map((t) => (
-                <button key={t} type="button" role="radio" aria-checked={tema === t} className="finish__mode" onClick={() => setTema(t)}>
-                  {t === "light" ? "Light" : "Dark"}
-                </button>
-              ))}
-            </div>
-            <pre className="finish__code">
-              <code>--st-tint: {cor.valor};</code>
-            </pre>
+            <Phone demo="controls" titulo={`A transfer form in ${cor.nome}, ${tema} appearance`} tint={cor.valor} tema={tema} tamanho="large" />
           </div>
         </section>
 
-        <section className="section section--gray">
+        <section className="section section--tint">
+          <Rotulo>04 · Built right</Rotulo>
           <h2 className="section__headline rise">Small by design.</h2>
-          <dl className="numbers">
-            <div>
-              <dt>51</dt>
-              <dd>components, from stacks to sheets</dd>
+          <div className="bento">
+            <div className="tile tile--number">
+              <strong>51</strong>
+              <span>components, from stacks to sheets</span>
             </div>
-            <div>
-              <dt>1</dt>
-              <dd>dependency. React.</dd>
+            <div className="tile tile--number">
+              <strong>1</strong>
+              <span>dependency: React</span>
             </div>
-            <div>
-              <dt>0</dt>
-              <dd>install scripts, ever</dd>
+            <div className="tile tile--number">
+              <strong>0</strong>
+              <span>install scripts, ever</span>
             </div>
-            <div>
-              <dt>MIT</dt>
-              <dd>open source license</dd>
+            <div className="tile tile--number">
+              <strong>MIT</strong>
+              <span>open source license</span>
             </div>
-          </dl>
-          <ul className="facts">
-            <li>
+            <div className="tile">
               <h3>Accessible</h3>
               <p>Real buttons, links, dialogs and radio groups. Focus goes where it should. Reduced motion is respected.</p>
-            </li>
-            <li>
+            </div>
+            <div className="tile">
               <h3>Any router</h3>
               <p>Links take an href or your router’s own link component. Navigation needs only the current location.</p>
-            </li>
-            <li>
+            </div>
+            <div className="tile">
               <h3>Installable</h3>
               <p>InstallGate shows how to install on each phone and browser, and opens your app only from its icon.</p>
-            </li>
-            <li>
+            </div>
+            <div className="tile">
               <h3>Barcode ready</h3>
-              <p>A camera scanner that works offline, shipped as its own entry so apps that never scan never download it.</p>
-            </li>
-          </ul>
+              <p>A camera scanner that works offline, in its own entry: apps that never scan never download it.</p>
+            </div>
+          </div>
         </section>
 
         <section id="start" className="section">
+          <Rotulo>05 · Developers</Rotulo>
           <h2 className="section__headline rise">Start building.</h2>
-          <p className="section__lead rise">Install the package, import the styles once, and write your first screen.</p>
-          <Instalar />
+          <p className="section__lead rise">Install the package, import the styles once, and write your first screen. The docs walk you through the rest.</p>
           <pre className="code">
             <code>{CODIGO}</code>
           </pre>
           <div className="hero__ctas">
-            <a href="#/docs/introduction" className="link link--chevron">
-              Read the documentation
+            <a href="#/docs/introduction" className="btn">
+              Read the docs
             </a>
-            <a href={GITHUB} className="link link--chevron">
-              View the source
+            <a href={GITHUB} className="btn btn--ghost">
+              View on GitHub
             </a>
           </div>
         </section>
@@ -309,25 +353,43 @@ function Landing() {
 
       <footer className="footer">
         <div className="footer__inner">
-          <p className="footer__credit">
-            Designed and built by{" "}
-            <a href={AUTOR} className="footer__author">
-              Gustavo Pavão
+          <div className="footer__brand">
+            <a href="#top" className="topbar__brand">
+              <Marca />
+              StackUI
             </a>
-            .
-          </p>
-          <p>StackUI is free and open source under the MIT license. iOS is a trademark of Apple Inc. Android is a trademark of Google LLC.</p>
-          <div className="footer__bottom">
-            <p>Copyright © 2026 Gustavo Pavão.</p>
-            <p>
-              <a href={GITHUB}>GitHub</a>
-              <span aria-hidden> | </span>
-              <a href={`${GITHUB}/blob/main/SECURITY.md`}>Security</a>
-              <span aria-hidden> | </span>
-              <a href={`${GITHUB}/blob/main/LICENSE`}>License</a>
+            <p>Build dynamic and elegant PWA applications for iOS and Android with React.</p>
+            <p className="footer__credit">
+              Created by{" "}
+              <a href={AUTOR} className="hero__author">
+                Gustavo Pavão
+              </a>
             </p>
           </div>
+          <div className="footer__cols">
+            <div>
+              <p className="footer__title">Learn</p>
+              <a href="#/docs/introduction">Introduction</a>
+              <a href="#/docs/installation">Installation</a>
+              <a href="#/docs/navigation">Navigation</a>
+              <a href="#/docs/theming">Theming</a>
+            </div>
+            <div>
+              <p className="footer__title">Components</p>
+              <a href="#/docs/sheet">Sheet</a>
+              <a href="#/docs/toast">Toast</a>
+              <a href="#/docs/lazy-list">LazyList</a>
+              <a href="#/docs/install-gate">InstallGate</a>
+            </div>
+            <div>
+              <p className="footer__title">Project</p>
+              <a href={GITHUB}>GitHub</a>
+              <a href={`${GITHUB}/blob/main/SECURITY.md`}>Security</a>
+              <a href={`${GITHUB}/blob/main/LICENSE`}>MIT License</a>
+            </div>
+          </div>
         </div>
+        <p className="footer__legal">© 2026 Gustavo Pavão. iOS is a trademark of Apple Inc. Android is a trademark of Google LLC.</p>
       </footer>
     </>
   );
